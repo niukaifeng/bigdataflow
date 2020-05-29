@@ -1,4 +1,5 @@
 {% extends 'adminlte/base.html' %}
+{% load crispy_forms_tags %}
 {% load staticfiles %}
 {#{% load crispy_forms_tags %}#}
 {% if title %}
@@ -12,115 +13,35 @@
 <script type="text/javascript" src="{% static "plugins/steps/lib.js" %}"></script>
 <!-- toastr js-->
 <script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
+<script type="text/javascript" src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
 <script type="application/javascript">
     var array_name = [];   //field_name
 	var array_key = [];   //field_key
 	var array_data = [];  //value
-	/*
-	function Dictionary() {
-	this.data = new Array();
-	this.put = function(key, value) {
-		this.data[key] = value;
-	};
-	}
-	*/
-    function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                            var cookie = jQuery.trim(cookies[i]);
-                            // Does this cookie string begin with the name we want?
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                    break;
-                            }
-                    }
-            }
-            return cookieValue;
-    }
-    var csrftoken = getCookie('bigdataflow');
-    function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
-            }
+
+    $('.dateinput').flatpickr();
+    $('.datetimeinput').flatpickr({
+        enableTime: true,
+        time_24hr: true,
+        dateFormat: 'Y-m-d H:i:S',
+        enableSeconds:true
     });
-    function submitsuggestion(transition_id,field_require_check){
-        var comment = $("#comment").val();
 
-		for (var i = 0; i < array_name.length; i++) {
-		   array_data[i] = $("#"+array_name[i]).val();
-		}
-
-         paramrs={}
-         for (var i = 0; i<param.length; i++) {
-             paramrs[param[i]]  =  $("#"+param[i]).val();
-             }
-
-        if (field_require_check && comment == ""){
-            toastr['error']("必须填写处理意见！");
-            return false;
+     function objectifyForm(formArray) {//serialize data function
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++){
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
         }
-
-
-        var data1 = {"username": "{{request.user.username}}", "transition_id": transition_id, "suggestion": comment};
-
-		for (var i = 0; i < array_key.length; i++) {
-             data1[array_key[i]]  =  array_data[i];
-             }
-
-	   console.log(data1);
-       var data = Object.assign(data1,paramrs);
-            $.ajax({
-            url: '{% url 'ticketdetail' ticket_id %}',
-            type: 'PATCH',
-            data: JSON.stringify(data),
-            success: function(data, textStatus, jqXHR) {
-                if (data.code != -1) {
-                    window.location.href = "{% url 'ticket-all'  %}?username=" + '{{request.user.username}}' + "&category=all"
-                }else{
-                    toastr['error'](data.msg);
-                }
-            },
-            error: function(data, textStatus, jqXHR) {
-                toastr['error'](data);
-            }
-        });
+        {#console.log(returnArray)#}
+        return returnArray;
     }
-
-    $(function () {
-        $('#sample_3').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "iDisplayLength": 50,
-            "autoWidth": false,
-        });
-        toastr.options = {
-            "closeButton": false,
-            "debug": false,
-            "newestOnTop": false,
-            "progressBar": false,
-            "positionClass": "toast-top-center",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
+    function getformdata(transition_id){
+        var data = $("#id-m-form").serializeArray();
+        console.log(transition_id);
+        return objectifyForm(data);
+    }
+        //获取操作的流程
         $.ajax({
             url: '{% url 'ticketflowsteps' ticket_id%}',
             type: 'GET',
@@ -150,94 +71,7 @@
                 toastr['error'](data);
             }
         });
-        $.ajax({
-            url: '{% url 'ticketdetail' ticket_id%}',
-            type: 'GET',
-            data: {'username':'{{request.user.username}}'},
-            success: function(data, textStatus, jqXHR) {
-                    if (data.code == 0){
-                        var html = '';
-                        var num = 0;
-                         window.param = new Array();
-                        for (var i = 0; i < data.data.value.field_list.length; i++) {
-                             param.push(data.data.value.field_list[i].field_name);
-                            num += 1;
-                            //处理select checkbox等数据显示
-                            //field type id equal to 60 bug need to be fixed
-                            console.log(data.data);
-
-                            switch (data.data.value.field_list[i].field_type_id) {
-
-                                case 45:
-                                    //下拉框
-                                    html += '<th>' + data.data.value.field_list[i].field_name + '</th><td>' + '<select class="select form-control select2-hidden-accessible">';
-                                    var arrs = Object.values(data.data.value.field_list[i].field_choice);
-                                    for (var j = 0; j < arrs.length; j++) {
-
-                                        html += '<option>' + arrs[j] + '</option>';
-                                        console.log(arrs);
-                                    }
-                                    html += '</select></td>';
-                                    break;
-                            }
-
-
-
-                            //{
-                            //原作者写的控件渲染
-                           {# if ( data.data.value.field_list[i].field_type_id == 35 || data.data.value.field_list[i].field_type_id == 45 ){#}
-                           {#     console.log(data.data)#}
-                           {#     html += '<th>'+ data.data.value.field_list[i].field_name + '</th><td>' + data.data.value.field_list[i].field_choice[data.data.value.field_list[i].field_value] + '</td>';#}
-                           {##}
-                           //{else if ( data.data.value.field_list[i].field_attribute == 1 ){
-                           {#     console.log(data.data)#}
-                           {#     html += '<th>'+ data.data.value.field_list[i].field_name + '</th><td>' + data.data.value.field_list[i].field_value + '</td>';#}
-                           {##}
-                           {# }else {#}
-                           {#      html += '<th>'+ data.data.value.field_list[i].field_name + '</th><td><input type="text" value=' + data.data.value.field_list[i].field_value + ' id=' + data.data.value.field_list[i].field_name +'></td>';#}
-                           {#      array_name.push(data.data.value.field_list[i].field_name);#}
-							{#	 array_key.push(data.data.value.field_list[i].field_key);#}
-							{#  #}
-
-                            if (num == 2){
-                                num = 0
-                                html = '<tr>' + html + '</tr>';
-                            }
-
-                        }
-                        $('#ticketdetail').append(html);
-                        //先处理工单显示，为避免处理意见显示位置错乱,待获取工单详情完成后获取用户可执行的操作action
-                            $.ajax({
-                                url: '{% url 'tickettranstion' ticket_id%}',
-                                type: 'GET',
-                                data: {'username':'{{request.user.username}}'},
-                                success: function(data, textStatus, jqXHR) {
-                                        if (data.code == 0){
-                                            var html = '';
-                                            for (var i = 0; i < data.data.value.length; i++) {
-                                                html += '<button type="button" class="btn btn-info" onclick=submitsuggestion(' + data.data.value[i].transition_id + ',' + data.data.value[i].field_require_check + ')><span>' + data.data.value[i].transition_name + '</span></button>';
-                                            }
-                                            $('#commentbutton').append(html);
-                                            //处理意见
-                                            $('#ticketdetail').append('<tr><th>处理意见</th><td><textarea wrap="soft" placeholder="请输入处理意见" rows="4" class="form-control" id="comment"></textarea></td></tr>');
-
-                                        }else{
-                                            toastr['warning'](data.msg);
-                                        }
-                                },
-                                error: function(data, textStatus, jqXHR) {
-                                    toastr['error'](data);
-                                }
-                            });
-                    }else{
-                        toastr['warning'](data.msg);
-                    }
-            },
-            error: function(data, textStatus, jqXHR) {
-                toastr['error'](data);
-            }
-
-        });
+        //获取操作的日志
         $.ajax({
             url: '{% url 'ticketflowlogs' ticket_id%}',
             type: 'GET',
@@ -262,13 +96,19 @@
             }
         });
     });
+     $('button[type=submit]').on('click', function(e) {
+        $(this).append('<input type="hidden" name="transition_id" value="'+ $(this).attr('transition_id') +'" /> ');
+    });
 </script>
 {% endblock %}
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'datatables/media/css/dataTables.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'select2/dist/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'select2-bootstrap-theme/dist/select2-bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static "css/workflow.css" %}" />
 <link rel="stylesheet" href="{% static "css/lbadminlte.css" %}" />
 <link rel="stylesheet" href="{% static "plugins/steps/style.css" %}" />
+<link rel="stylesheet" href="{% static 'flatpickr/dist/flatpickr.min.css' %}">
 <!--toastr css-->
 <link rel="stylesheet" href="{% static "plugins/toastr/toastr.css" %}">
 <style type="text/css">
@@ -284,6 +124,34 @@
     .object-controls {
         margin-top: 10px;
     }
+    .col-md-swapper{
+       width: 100%;
+      margin:20px 0 20px 6px;
+    }
+    .form-table-group{
+         width:calc(calc(100% / 2) - 20px);
+        height: 40px;
+         margin-bottom: 20px;
+    }
+    .form-horizontal{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .col-md-label{
+        width:240px;
+        margin-left: 30px;
+    }
+    .col-md-field{
+        width:400px;
+        margin-left: 30px;
+    }
+    .form-group{
+        display: flex;
+        flex-direction: row;
+        width:500px;
+        height: 50px;
+    }
+
 </style>
 {% endblock %}
 
@@ -303,7 +171,6 @@
 
 
 {% block content %}
-
     <div class="row">
         <fieldset>
             <legend class='text-center text-info'> 业务流程</legend>
@@ -319,17 +186,25 @@
             <legend class='text-center text-info'>工单详情</legend>
         </fieldset>
 
-{#        {% if form.helper %}#}
-{#            {% crispy form form.helper %}#}
-{#        {% else %}#}
-{#            {% crispy form %}#}
-{#        {% endif %}#}
+        <div class="col-md-swapper">
+            {% if form.helper %}
+                {% crispy form form.helper %}
+            {% else %}
+                {% crispy form %}
+            {% endif %}
+            <div class="form-table-group">
+                <div class="col-xs-offset-2 col-xs-10">
+                    {% block form_bottom_ext %}
+                    {% endblock %}
+                    {% block form_act_btns %}
+                    {% for button in buttons %}
+                        <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
+                    {% endfor %}
+                        <button type="button" class="btn btn-default goback" onclick="history.back()">Cancel</button>
+                    {% endblock %}
+                </div>
+            </div>
 
-
-        <div class="col-md-12">
-            <table class="table table-bordered tb-detail wf-act-history">
-              <tbody id="ticketdetail">
-            </tbody></table>
         </div>
     </div>
 
