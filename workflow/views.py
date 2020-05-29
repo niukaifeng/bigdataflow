@@ -15,7 +15,7 @@ import datetime
 import time
 from workflow.apirequest import WorkFlowAPiRequest
 from django.contrib.auth.models import User
-from workflow.util.Utils import Util
+from workflow.util.utils import Util
 
 # Create your views here.
 # 登录后首页调用的函数，返回的是数据库中workflow_workflow表
@@ -394,42 +394,3 @@ class GetUserName(LoginRequiredMixin,View):
         return JsonResponse(data={'username':data})
 
 
-
-
-
-class Page1(LoginRequiredMixin, TemplateView):
-    template_name = 'workflow/first-page.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(Page1, self).get_context_data(**kwargs)
-        #context['workflows'] = Workflow.objects.all()
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,data = ins.getdata(dict(per_page=20, name=''),method='get',url='/api/v1.0/workflows')
-        if status:
-            context['workflows'] = data['data']['value']
-        #print(context)
-        return context
-
-class Page2(LoginRequiredMixin, TemplateView):
-    template_name = 'workflow/second-page.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(Page2, self).get_context_data(**kwargs)
-        #context['workflows'] = Workflow.objects.all()
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,data = ins.getdata(dict(per_page=20, name=''),method='get',url='/api/v1.0/workflows')
-        if status:
-            context['workflows'] = data['data']['value']
-        # print(context)
-        return context
-
-
-# def page1(request):
-#     #content_list = User.objects.all()  #模型类.objects.all()用于获取数据库中该模型类对应的表中的所有信息
-#     #(filepath, filename) = os.path.split(content_list)
-#     return render(request, 'workflow/first-page.html', {})
-
-# def page2(request):
-#     #content_list = User.objects.all()  #模型类.objects.all()用于获取数据库中该模型类对应的表中的所有信息
-#     #(filepath, filename) = os.path.split(content_list)
-#     return render(request, 'workflow/second-page.html', {})

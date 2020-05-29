@@ -1,8 +1,7 @@
 from django.conf.urls import url, include,re_path
 
 from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,TicketDetailApi,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketTransition,TicketFlowlog,GetUserName# , TicketDetail, TicketCreate
-from workflow.views import Page1,Page2
-from workflow import views
+
 
 urlpatterns = [
     re_path(r'^$', Index.as_view(), name='workflow-index'),
@@ -28,9 +27,4 @@ urlpatterns = [
         TicketCreate.as_view(), name='ticketcreate'),
     re_path(r'^getusername/$',
         GetUserName.as_view(), name='getusername'),
-
-    re_path(r'^page1/$', Page1.as_view(), name='first-page'),
-    re_path(r'^page2/$', Page2.as_view(), name='second-page'),
-    # re_path(r'^page1/$', views.page1, name='first-page'),
-    # re_path(r'^page2/$', views.page2, name='second-page'),
 ]
