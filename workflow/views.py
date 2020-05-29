@@ -148,19 +148,21 @@ class TicketDetail(LoginRequiredMixin, TemplateView):
     template_name = 'workflow/ticketdetail.html'
     success="/"
 
-    def get_context_data(self, **kwargs):
-        context = super(TicketDetail, self).get_context_data(**kwargs)
-        context['ticket_id'] = kwargs.get('ticket_id')
+    def get_form_class(self):
+        form_fields = dict()
+        ticket_id = self.kwargs.get('ticket_id')
+        print('--------------')
+        print(ticket_id)
+
         ins = WorkFlowAPiRequest(username=self.request.user.username)
         status, state_result = ins.getdata(parameters={}, method='get',
-                                           url='/api/v1.0/tickets/{0}'.format(self.kwargs.get('ticket_id')))
-        form_fields = dict()
-        print(state_result)
+                                           url='/api/v1.0/tickets/{0}'.format(ticket_id))
+
         state_result = state_result['data']['value']
 
         print(state_result)
 
-        kwargs.update({'state_result': state_result})
+        self.kwargs.update({'state_result': state_result})
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
@@ -174,7 +176,7 @@ class TicketDetail(LoginRequiredMixin, TemplateView):
                         *[Div(field['field_key'], css_class='form-group') for field in state_result['field_list']])
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
-            print( state_result['field_list'])
+            print(state_result['field_list'])
             for field in state_result['field_list']:
 
                 Util.createWebDirex(field, forms, form_fields, User)
@@ -185,6 +187,11 @@ class TicketDetail(LoginRequiredMixin, TemplateView):
         else:
             raise Http404()
         return type('DynamicItemsForm', (DynamicForm,), form_fields)
+
+    def get_context_data(self, **kwargs):
+        context = super(TicketDetail, self).get_context_data(**kwargs)
+        context['ticket_id'] = kwargs.get('ticket_id')
+        return context
 
 # 在我创建的页面中点击“详情”，显示工单的详情页面，按照点击对应工单的id具体显示  by kf
 class TicketDetailApi(LoginRequiredMixin,View):
