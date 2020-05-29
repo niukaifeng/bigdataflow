@@ -97,9 +97,10 @@ class Util (object):
                                                               initial=field['default_value'],
                                                               error_messages={
                                                                   'required': field['description']},
-                                                              widget=CKEditorUploadingWidget(
-                                                                  attrs={'placeholder': field['field_name'],
-                                                                         'cols': 20, 'rows': 10}))
+                                                               widget=forms.Textarea(
+                                                                   attrs={'placeholder': field['field_name'],
+                                                                          'cols': 20, 'rows': 10})
+                                                              )
         elif field['field_type_id'] == 60:
             form_fields[field['field_key']] = forms.ChoiceField(help_text=field['description'],
                                                                 label=field['field_name'],
