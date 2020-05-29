@@ -144,7 +144,7 @@ class MyTicket(LoginRequiredMixin, TemplateView):
         return context
 
 # 在我创建的页面中点击“详情”，显示工单的详情页面  by kf
-#LoginRequiredMixin,
+#LoginRequiredMixin,TemplateView  FormView
 class TicketDetail(LoginRequiredMixin, FormView):
     template_name = 'workflow/ticketdetail.html'
     success="/"
@@ -152,20 +152,18 @@ class TicketDetail(LoginRequiredMixin, FormView):
     def get_form_class(self):
         form_fields = dict()
         ticket_id = self.kwargs.get('ticket_id')
-        print('--------------')
-        print(ticket_id)
 
         ins = WorkFlowAPiRequest(username=self.request.user.username)
+
+        #获取组建
         status, state_result = ins.getdata(parameters={}, method='get',
                                            url='/api/v1.0/tickets/{0}'.format(ticket_id))
-
+        #获取提交按钮
         status2, state_result2 = ins.getdata(parameters={}, method='get',
                                            url='/api/v1.0/tickets/{0}/transitions'.format(self.kwargs.get('ticket_id')))
 
         state_result = state_result['data']['value']
         state_result2 = state_result2['data']['value']
-
-        print(state_result)
 
         self.kwargs.update({'state_result': state_result})
         self.kwargs.update({'state_result2': state_result2})
@@ -183,7 +181,6 @@ class TicketDetail(LoginRequiredMixin, FormView):
                         *[Div(field['field_key'], css_class='form-table-group') for field in state_result['field_list']])
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
-            print(state_result['field_list'])
             for field in state_result['field_list']:
                 Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
@@ -196,12 +193,19 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(TicketDetail, self).get_context_data(**kwargs)
+
         state_result = self.kwargs.get('state_result', None)
         state_result2 = self.kwargs.get('state_result2', None)
+
+        #为了组建显示
         context['state_result'] = state_result
+
+        #查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
 
+        #按钮显示
         context['buttons'] = state_result2
+
         return context
 
     def form_valid(self, form):
