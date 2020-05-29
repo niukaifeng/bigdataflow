@@ -144,39 +144,47 @@ class MyTicket(LoginRequiredMixin, TemplateView):
         return context
 
 # 在我创建的页面中点击“详情”，显示工单的详情页面  by kf
-class TicketDetail(LoginRequiredMixin, TemplateView):
+#LoginRequiredMixin,
+class TicketDetail(LoginRequiredMixin, FormView):
     template_name = 'workflow/ticketdetail.html'
     success="/"
 
-    def get_context_data(self, **kwargs):
-        context = super(TicketDetail, self).get_context_data(**kwargs)
-        context['ticket_id'] = kwargs.get('ticket_id')
+    def get_form_class(self):
+        form_fields = dict()
+        ticket_id = self.kwargs.get('ticket_id')
+        print('--------------')
+        print(ticket_id)
+
         ins = WorkFlowAPiRequest(username=self.request.user.username)
         status, state_result = ins.getdata(parameters={}, method='get',
-                                           url='/api/v1.0/tickets/{0}'.format(self.kwargs.get('ticket_id')))
-        form_fields = dict()
-        print(state_result)
+                                           url='/api/v1.0/tickets/{0}'.format(ticket_id))
+
+        status2, state_result2 = ins.getdata(parameters={}, method='get',
+                                           url='/api/v1.0/tickets/{0}/transitions'.format(self.kwargs.get('ticket_id')))
+
         state_result = state_result['data']['value']
+        state_result2 = state_result2['data']['value']
 
         print(state_result)
 
-        kwargs.update({'state_result': state_result})
+        self.kwargs.update({'state_result': state_result})
+        self.kwargs.update({'state_result2': state_result2})
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
                 def __init__(self, *args, **kwargs):
                     self.helper = FormHelper()
                     self.helper.form_class = 'form-horizontal'
-                    self.helper.label_class = 'col-md-2'
-                    self.helper.field_class = 'col-md-8'
+                    self.helper.form_action = " "
+                    self.helper.label_class = 'col-md-label'
+                    self.helper.field_class = 'col-md-field'
                     # DictionaryField bug
                     self.helper.layout = Layout(
-                        *[Div(field['field_key'], css_class='form-group') for field in state_result['field_list']])
+                        *[Div(field['field_key'], css_class='form-table-group') for field in state_result['field_list']])
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
-            print( state_result['field_list'])
+            print(state_result['field_list'])
             for field in state_result['field_list']:
-
                 Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
                 if field['field_attribute'] == 1:
@@ -185,6 +193,39 @@ class TicketDetail(LoginRequiredMixin, TemplateView):
         else:
             raise Http404()
         return type('DynamicItemsForm', (DynamicForm,), form_fields)
+
+    def get_context_data(self, **kwargs):
+        context = super(TicketDetail, self).get_context_data(**kwargs)
+        state_result = self.kwargs.get('state_result', None)
+        state_result2 = self.kwargs.get('state_result2', None)
+        context['state_result'] = state_result
+        context['ticket_id'] = self.kwargs.get('ticket_id')
+
+        context['buttons'] = state_result2
+        return context
+
+    def form_valid(self, form):
+        # save ticket
+        if 'transition_id' in form.data.keys():
+            transition_id = form.data['transition_id']
+            form_data = form.cleaned_data
+            form_data['transition_id'] = int(transition_id)
+            # form_data['username'] = self.request.user.username
+            form_data['workflow_id'] = int(self.kwargs.get('workflow_id'))
+            for key, value in form_data.items():
+                # 原始代码：if isinstance(value, datetime.datetime):
+                # 修改后解决了日期、日期时间的问题
+                if isinstance(value, datetime.date):
+                    form_data[key] = form.data[key]
+
+            # for test only
+            ins = WorkFlowAPiRequest(username=self.request.user.username)
+            status, state_result = ins.getdata(data=form_data, method='post', url='/api/v1.0/tickets')
+            # if new_ticket_result:
+            # code, data = 0, {'ticket_id': new_ticket_result}
+            # else:
+            # code, data = -1, {}
+        return super().form_valid(form)
 
 # 在我创建的页面中点击“详情”，显示工单的详情页面，按照点击对应工单的id具体显示  by kf
 class TicketDetailApi(LoginRequiredMixin,View):
@@ -322,14 +363,7 @@ class TicketTransition(LoginRequiredMixin,View):
     """
 
     def get(self, request, *args, **kwargs):
-        request_data = request.GET
-        ticket_id = kwargs.get('ticket_id')
-        username = request_data.get('username', '')
-        if not username:
-            return api_response(-1, '参数不全，请提供username', '')
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,state_result = ins.getdata(parameters={},method='get',url='/api/v1.0/tickets/{0}/transitions'.format(self.kwargs.get('ticket_id')))
-        return JsonResponse(data=state_result)
+        pass
 
 #工单流转的记录日志    by kf
 class TicketFlowlog(LoginRequiredMixin,View):
