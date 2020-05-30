@@ -129,11 +129,14 @@
         width: 100%;
         height: 100%;
         margin:20px 0 20px 6px;
+        display: inline-block;
     }
+
     .form-table-group{
         width:calc(calc(100% / 2) - 20px);
         height: 40px;
         margin-bottom: 20px;
+        display: inherit;
     }
     .form-horizontal{
         display: flex;
@@ -158,6 +161,9 @@
     textarea{
         width:100% !important;
         height:100% !important;
+    }
+    .inline_css{
+        display: inline !important;
     }
 
 </style>
@@ -189,32 +195,34 @@
         </div>
     </div>
 
+
     <div class="row">
         <fieldset>
             <legend class='text-center text-info'>工单详情</legend>
         </fieldset>
-
-        <div class="col-md-swapper">
-            {% if form.helper %}
-                {% crispy form form.helper %}
-            {% else %}
-                {% crispy form %}
-            {% endif %}
-            <div class="form-table-group">
-                <div class="col-xs-offset-2 col-xs-10">
-                    {% block form_bottom_ext %}
-                    {% endblock %}
-                    {% block form_act_btns %}
-                    {% for button in buttons %}
-                        <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
-                    {% endfor %}
-                        <button type="button" class="btn btn-default goback" onclick="history.back()">Cancel</button>
-                    {% endblock %}
+        <form id="id-m-form" action="" method="post" class="myform" role="form">
+            <div class="col-md-swapper">
+                {% if form.helper %}
+                    {% crispy form form.helper %}
+                {% else %}
+                    {% crispy form %}
+                {% endif %}
+                <div class="form-table-group inline_css">
+                    <div class="col-xs-offset-2 col-xs-10">
+                        {% block form_bottom_ext %}
+                        {% endblock %}
+                        {% block form_act_btns %}
+                        {% for button in buttons %}
+                            <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
+                        {% endfor %}
+                            <button type="button" class="btn btn-default goback" onclick="history.back()">Cancel</button>
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
-
-        </div>
+        </form>
     </div>
+
 
     <div class="row">
         <div class="col-md-12">
