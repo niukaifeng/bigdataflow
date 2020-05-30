@@ -147,7 +147,7 @@ class MyTicket(LoginRequiredMixin, TemplateView):
 #LoginRequiredMixin,TemplateView  FormView
 class TicketDetail(LoginRequiredMixin, FormView):
     template_name = 'workflow/ticketdetail.html'
-    success="/"
+    success_url="/"
 
     def get_form_class(self):
         form_fields = dict()
@@ -214,21 +214,19 @@ class TicketDetail(LoginRequiredMixin, FormView):
             transition_id = form.data['transition_id']
             form_data = form.cleaned_data
             form_data['transition_id'] = int(transition_id)
-            # form_data['username'] = self.request.user.username
-            form_data['workflow_id'] = int(self.kwargs.get('workflow_id'))
+            # suggestion
+            ticket_id = int(self.kwargs.get('ticket_id'))
+
             for key, value in form_data.items():
                 # 原始代码：if isinstance(value, datetime.datetime):
                 # 修改后解决了日期、日期时间的问题
                 if isinstance(value, datetime.date):
                     form_data[key] = form.data[key]
 
-            # for test only
             ins = WorkFlowAPiRequest(username=self.request.user.username)
-            status, state_result = ins.getdata(data=form_data, method='post', url='/api/v1.0/tickets')
-            # if new_ticket_result:
-            # code, data = 0, {'ticket_id': new_ticket_result}
-            # else:
-            # code, data = -1, {}
+            status, state_result = ins.getdata(data=form_data, method='patch',
+                                               url='/api/v1.0/tickets/{0}'.format(ticket_id))
+
         return super().form_valid(form)
 
 # 在我创建的页面中点击“详情”，显示工单的详情页面，按照点击对应工单的id具体显示  by kf
