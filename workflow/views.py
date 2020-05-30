@@ -208,6 +208,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         return context
 
+    # 点击确认后，提交表单
     def form_valid(self, form):
         # save ticket
         if 'transition_id' in form.data.keys():

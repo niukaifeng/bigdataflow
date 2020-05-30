@@ -208,7 +208,7 @@
                     {% crispy form %}
                 {% endif %}
                 <div class="form-table-group">
-                    <div id="div_id_texta" class="form-group">
+                    <div class="form-group">
                         <label for="suggestion" class="control-label col-md-label">处理意见</label>
                         <div class="col-md-field">
                             <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>
@@ -223,7 +223,7 @@
                         {% for button in buttons %}
                             <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
                         {% endfor %}
-                            <button type="button" class="btn btn-default goback" onclick="history.back()">Cancel</button>
+                            <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>
                         {% endblock %}
                     </div>
                 </div>
