@@ -207,14 +207,16 @@
                 {% else %}
                     {% crispy form %}
                 {% endif %}
-                <div class="form-table-group">
-                    <div class="form-group">
-                        <label for="suggestion" class="control-label col-md-label">处理意见</label>
-                        <div class="col-md-field">
-                            <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>
+                {% if showSuggestion %}
+                    <div class="form-table-group">
+                        <div class="form-group">
+                            <label for="suggestion" class="control-label col-md-label">处理意见</label>
+                            <div class="col-md-field">
+                                <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
                 <div class="form-table-group inline_css">
                     <div class="col-xs-offset-2 col-xs-10">
                         {% block form_bottom_ext %}
