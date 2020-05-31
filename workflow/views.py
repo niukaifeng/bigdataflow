@@ -177,6 +177,8 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         self.kwargs.update({'state_result': state_result})
         self.kwargs.update({'state_result2': state_result2})
+        if (len(state_result['field_list']) != 0):
+            self.kwargs.update({'showSuggestion': 'true'})
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
@@ -213,6 +215,8 @@ class TicketDetail(LoginRequiredMixin, FormView):
         #查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
 
+        context['showSuggestion'] = self.kwargs.get('showSuggestion')
+
         #按钮显示
         context['buttons'] = state_result2
 
@@ -228,6 +232,9 @@ class TicketDetail(LoginRequiredMixin, FormView):
             # suggestion
             ticket_id = int(self.kwargs.get('ticket_id'))
             file_keys = list(form.files.keys())
+            suggestion = form.data['suggestion']
+            form_data['suggestion'] = suggestion
+
             for file_key in file_keys:
                 # 存放
                 file = form.files[file_key].file
