@@ -177,7 +177,7 @@
         <small>{{title|capfirst}}</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active">我创建的工单</li>
     </ol>
 </section>
@@ -207,17 +207,16 @@
                 {% else %}
                     {% crispy form %}
                 {% endif %}
-                <div class="form-table-group">
-
-                    {% if showSuggestion %}
-                    <div id="div_id_texta" class="form-group">
-                        <label for="suggestion" class="control-label col-md-label">处理意见</label>
-                        <div class="col-md-field">
-                            <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>
+                {% if showSuggestion %}
+                    <div class="form-table-group">
+                        <div class="form-group">
+                            <label for="suggestion" class="control-label col-md-label">处理意见</label>
+                            <div class="col-md-field">
+                                <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>
+                            </div>
                         </div>
                     </div>
-                    {% endif %}
-                </div>
+                {% endif %}
                 <div class="form-table-group inline_css">
                     <div class="col-xs-offset-2 col-xs-10">
                         {% block form_bottom_ext %}
