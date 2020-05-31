@@ -48,12 +48,12 @@ class TicketCreate(LoginRequiredMixin, FormView):
         status, state_result = ins.getdata({}, method='get',
                                            url='/api/v1.0/workflows/{0}/init_state'.format(workflow_id))
         # print(1)
-        print(state_result)
+        # print(state_result)
         state_result = state_result['data']
 
         self.kwargs.update({'state_result': state_result})
 
-        print(state_result.keys())
+        #print(state_result.keys())
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
                 def __init__(self, *args, **kwargs):
@@ -214,7 +214,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         #查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
-
+        # 画面显示“处理意见”控件
         context['showSuggestion'] = self.kwargs.get('showSuggestion')
 
         #按钮显示

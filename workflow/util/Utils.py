@@ -128,7 +128,7 @@ class Util (object):
     def saveFile(self,datab, path):
         '''
         以文件形式保存数据
-        :param html: 要保存的数据
+        :param datab: 要保存的数据
         :param path: 要保存数据的路径
         :return:
 
