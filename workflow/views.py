@@ -12,6 +12,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field
 
 import datetime
+import os
 import time
 from workflow.apirequest import WorkFlowAPiRequest
 from django.contrib.auth.models import User
@@ -97,11 +98,20 @@ class TicketCreate(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         # save ticket
         if 'transition_id' in form.data.keys():
+
             transition_id = form.data['transition_id']
             form_data = form.cleaned_data
             form_data['transition_id'] = int(transition_id)
             # form_data['username'] = self.request.user.username
             form_data['workflow_id'] = int(self.kwargs.get('workflow_id'))
+            file_keys = list(form.files.keys())
+            for file_key in file_keys:
+                #存放
+                file = form.files[file_key].file
+                file_name  = form.files[file_key].name
+                form_data[file_key] = os.path.abspath(os.curdir)+'/media/'+str(int(time.time()))+file_name
+                Util.saveFile(file,str(int(time.time()))+file_name)
+
             for key, value in form_data.items():
                 #原始代码：if isinstance(value, datetime.datetime):
                 # 修改后解决了日期、日期时间的问题
@@ -217,6 +227,13 @@ class TicketDetail(LoginRequiredMixin, FormView):
             form_data['transition_id'] = int(transition_id)
             # suggestion
             ticket_id = int(self.kwargs.get('ticket_id'))
+            file_keys = list(form.files.keys())
+            for file_key in file_keys:
+                # 存放
+                file = form.files[file_key].file
+                file_name = form.files[file_key].name
+                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + str(int(time.time())) + file_name
+                Util.saveFile(file, str(int(time.time())) + file_name)
 
             for key, value in form_data.items():
                 # 原始代码：if isinstance(value, datetime.datetime):

@@ -1,4 +1,5 @@
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+import os
 
 
 
@@ -119,5 +120,29 @@ class Util (object):
                                                               initial=field['default_value'],
                                                               error_messages={
                                                                   'required': field['description']},
-                                                              widget=forms.FileInput(
-                                                                  attrs={'placeholder': field['field_name']}))
+                                                              widget=forms.ClearableFileInput(
+                                                                  attrs={'multiple': True,'placeholder': field['field_name']}))
+
+
+    @classmethod
+    def saveFile(self,datab, path):
+        '''
+        以文件形式保存数据
+        :param html: 要保存的数据
+        :param path: 要保存数据的路径
+        :return:
+
+        '''
+        # 判断目录是否存在
+        file_path = os.path.abspath(os.curdir)+'/media/'+path
+        if not os.path.exists(os.path.split(file_path)[0]):
+            # 目录不存在创建，makedirs可以创建多级目录
+            os.makedirs(os.path.split(file_path)[0])
+        try:
+            # 保存数据到文件
+            with open(file_path, 'wb') as f:
+                data = datab.read()
+                f.write(data)
+            print('保存成功')
+        except Exception as e:
+            print('保存失败', e)
