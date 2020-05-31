@@ -178,6 +178,9 @@ class TicketDetail(LoginRequiredMixin, FormView):
         self.kwargs.update({'state_result': state_result})
         self.kwargs.update({'state_result2': state_result2})
 
+        if (len(state_result['field_list']) != 0):
+            self.kwargs.update({'showSuggestion': 'true'})
+
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
                 def __init__(self, *args, **kwargs):
@@ -216,6 +219,9 @@ class TicketDetail(LoginRequiredMixin, FormView):
         #按钮显示
         context['buttons'] = state_result2
 
+        context['showSuggestion'] = self.kwargs.get('showSuggestion')
+        #
+
         return context
 
     def form_valid(self, form):
@@ -225,6 +231,8 @@ class TicketDetail(LoginRequiredMixin, FormView):
             form_data = form.cleaned_data
             form_data['transition_id'] = int(transition_id)
             # suggestion
+            suggestion = form.data['suggestion']
+            form_data['suggestion'] = suggestion
             ticket_id = int(self.kwargs.get('ticket_id'))
             file_keys = list(form.files.keys())
             for file_key in file_keys:
