@@ -16,7 +16,7 @@ import os
 import time
 from workflow.apirequest import WorkFlowAPiRequest
 from django.contrib.auth.models import User
-from workflow.util.utils import Util
+from workflow.util.Utils import Util
 
 # Create your views here.
 # 登录后首页调用的函数，返回的是数据库中workflow_workflow表
@@ -178,9 +178,6 @@ class TicketDetail(LoginRequiredMixin, FormView):
         self.kwargs.update({'state_result': state_result})
         self.kwargs.update({'state_result2': state_result2})
 
-        if (len(state_result['field_list']) != 0):
-            self.kwargs.update({'showSuggestion': 'true'})
-
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
                 def __init__(self, *args, **kwargs):
@@ -219,11 +216,9 @@ class TicketDetail(LoginRequiredMixin, FormView):
         #按钮显示
         context['buttons'] = state_result2
 
-        context['showSuggestion'] = self.kwargs.get('showSuggestion')
-        #
-
         return context
 
+    # 点击确认后，提交表单
     def form_valid(self, form):
         # save ticket
         if 'transition_id' in form.data.keys():
@@ -231,8 +226,6 @@ class TicketDetail(LoginRequiredMixin, FormView):
             form_data = form.cleaned_data
             form_data['transition_id'] = int(transition_id)
             # suggestion
-            suggestion = form.data['suggestion']
-            form_data['suggestion'] = suggestion
             ticket_id = int(self.kwargs.get('ticket_id'))
             file_keys = list(form.files.keys())
             for file_key in file_keys:
