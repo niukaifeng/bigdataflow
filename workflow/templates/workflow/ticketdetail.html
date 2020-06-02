@@ -48,10 +48,12 @@
         type: 'GET',
         data: {'username':'{{request.user.username}}'},
         success: function(data, textStatus, jqXHR) {
+            {#step来记录节点，进行前端渲染#}
             var step = 1 ;
             if (data.code == 0){
                 var html = '';
                 for (var i = 0; i < data.data.value.length; i++) {
+                    {#用当前current_state_id来判断节点#}
                     var currentId = data.data.current_state_id;
                     if (data.data.value[i].state_id == currentId){
                         step= i;
