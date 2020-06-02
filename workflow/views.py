@@ -105,12 +105,13 @@ class TicketCreate(LoginRequiredMixin, FormView):
             # form_data['username'] = self.request.user.username
             form_data['workflow_id'] = int(self.kwargs.get('workflow_id'))
             file_keys = list(form.files.keys())
+            title = form.data["title"]
             for file_key in file_keys:
                 #存放
                 file = form.files[file_key].file
                 file_name  = form.files[file_key].name
-                form_data[file_key] = os.path.abspath(os.curdir)+'/media/'+str(int(time.time()))+file_name
-                Util.saveFile(file,str(int(time.time()))+file_name)
+                form_data[file_key] = os.path.abspath(os.curdir)+'/media/' + title +'/'+str(int(time.time()))+file_name
+                Util.saveFile(file,form_data[file_key])
 
             for key, value in form_data.items():
                 #原始代码：if isinstance(value, datetime.datetime):
@@ -176,6 +177,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
         state_result2 = state_result2['data']['value']
 
         self.kwargs.update({'state_result': state_result})
+        self.kwargs.update({'title': state_result["title"]})
         self.kwargs.update({'state_result2': state_result2})
         if (len(state_result['field_list']) != 0):
             self.kwargs.update({'showSuggestion': 'true'})
@@ -217,6 +219,10 @@ class TicketDetail(LoginRequiredMixin, FormView):
         # 画面显示“处理意见”控件
         context['showSuggestion'] = self.kwargs.get('showSuggestion')
 
+        # title 文件存储的路径
+        context['title'] = self.kwargs.get('title')
+
+
         #按钮显示
         context['buttons'] = state_result2
 
@@ -234,13 +240,14 @@ class TicketDetail(LoginRequiredMixin, FormView):
             file_keys = list(form.files.keys())
             suggestion = form.data['suggestion']
             form_data['suggestion'] = suggestion
+            title = form.data["title"]
 
             for file_key in file_keys:
                 # 存放
                 file = form.files[file_key].file
                 file_name = form.files[file_key].name
-                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + str(int(time.time())) + file_name
-                Util.saveFile(file, str(int(time.time())) + file_name)
+                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/" + str(int(time.time())) + file_name
+                Util.saveFile(file, form_data[file_key])
 
             for key, value in form_data.items():
                 # 原始代码：if isinstance(value, datetime.datetime):
