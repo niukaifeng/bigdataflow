@@ -48,23 +48,21 @@
         type: 'GET',
         data: {'username':'{{request.user.username}}'},
         success: function(data, textStatus, jqXHR) {
-
-                var step = 1 ;
-                if (data.code == 0){
-                    var html = '';
-                    for (var i = 0; i < data.data.value.length; i++) {
-                        var currentId = data.data.current_state_id;
-                        if (data.data.value[j].state_id == currentId){
-                            step= j;
-                            break;
-                        }
-                        html += '<li><a>'+ data.data.value[i].state_name + '</a></li>';
+            var step = 1 ;
+            if (data.code == 0){
+                var html = '';
+                for (var i = 0; i < data.data.value.length; i++) {
+                    var currentId = data.data.current_state_id;
+                    if (data.data.value[i].state_id == currentId){
+                        step= i;
                     }
-                    $('#flowsteps').append(html);
-                    bsStep(step+2);
-                }else{
-                    toastr['warning'](data.msg);
+                    html += '<li><a>'+ data.data.value[i].state_name + '</a></li>';
                 }
+                $('#flowsteps').append(html);
+                    bsStep(step+1);
+            }else{
+                toastr['warning'](data.msg);
+            }
         },
         error: function(data, textStatus, jqXHR) {
             toastr['error'](data);
