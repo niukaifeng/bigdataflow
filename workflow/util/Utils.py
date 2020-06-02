@@ -125,7 +125,7 @@ class Util (object):
 
 
     @classmethod
-    def saveFile(self,datab, path):
+    def saveFile(self,datab,path):
         '''
         以文件形式保存数据
         :param datab: 要保存的数据
@@ -134,13 +134,13 @@ class Util (object):
 
         '''
         # 判断目录是否存在
-        file_path = os.path.abspath(os.curdir)+'/media/'+path
-        if not os.path.exists(os.path.split(file_path)[0]):
+
+        if not os.path.exists(os.path.split(path)[0]):
             # 目录不存在创建，makedirs可以创建多级目录
-            os.makedirs(os.path.split(file_path)[0])
+            os.makedirs(os.path.split(path)[0])
         try:
             # 保存数据到文件
-            with open(file_path, 'wb') as f:
+            with open(path, 'wb') as f:
                 data = datab.read()
                 f.write(data)
             print('保存成功')

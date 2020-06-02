@@ -53,17 +53,15 @@
                 if (data.code == 0){
                     var html = '';
                     for (var i = 0; i < data.data.value.length; i++) {
-                        if ( data.data.value[i].state_flow_log_list.length >=1 && data.data.value[i].state_flow_log_list[0].transition.transition_name != "驳回"){
-                            step = i
+                        var currentId = data.data.current_state_id;
+                        if (data.data.value[j].state_id == currentId){
+                            step= j;
+                            break;
                         }
                         html += '<li><a>'+ data.data.value[i].state_name + '</a></li>';
                     }
                     $('#flowsteps').append(html);
-                    if (step != data.data.value.length ){
-                        bsStep(step+2);
-                    }else{
-                        bsStep(step+1);
-                    }
+                    bsStep(step+2);
                 }else{
                     toastr['warning'](data.msg);
                 }
@@ -232,6 +230,7 @@
                         {% endblock %}
                     </div>
                 </div>
+                <input type="hidden" value="{{ title }}" name="title">
             </div>
         </form>
     </div>
