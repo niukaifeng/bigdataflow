@@ -53,7 +53,7 @@
                 if (data.code == 0){
                     var html = '';
                     for (var i = 0; i < data.data.value.length; i++) {
-                        if ( data.data.value[i].state_flow_log_list.length >=1 && data.data.value[i].state_flow_log_list[0].transition.transition_name != "拒绝"){
+                        if ( data.data.value[i].state_flow_log_list.length >=1 && data.data.value[i].state_flow_log_list[0].transition.transition_name != "驳回"){
                             step = i
                         }
                         html += '<li><a>'+ data.data.value[i].state_name + '</a></li>';
@@ -224,8 +224,11 @@
                         {% block form_act_btns %}
                         {% for button in buttons %}
                             <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
-                            <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>
                         {% endfor %}
+                        {% if showSuggestion %}
+{#                            利用对处理意见的控件判断方法，没有控件显示时，取消按钮也不显示#}
+                            <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>
+                        {% endif %}
                         {% endblock %}
                     </div>
                 </div>
