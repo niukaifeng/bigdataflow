@@ -1,6 +1,6 @@
 from django.conf.urls import url, include,re_path
 
-from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,TicketDetailApi,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketTransition,TicketFlowlog,GetUserName# , TicketDetail, TicketCreate
+from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep# , TicketDetail, TicketCreate
 
 
 urlpatterns = [
@@ -9,14 +9,10 @@ urlpatterns = [
     re_path(r'^mytodo/$', MyToDoTicket.as_view(), name='ticket-my-todo'),
     re_path(r'^myrelated/$', MyRelatedTicket.as_view(), name='ticket-my-related'),
     re_path(r'^all/$', AllTicket.as_view(), name='ticket-all'),
-    # #url(r'^$', WorkflowView.as_view(), name='workflow-all'),
-    # #url(r'^(?P<workflow_id>[0-9]+)/init_state',
-    #     #WorkflowInitView.as_view(), name='workflow-init'),
-    # #url(r'^states/(?P<state_id>[0-9]+)', StateView.as_view()),
+
     re_path(r'^ticket/(?P<ticket_id>[0-9]+)/$',
         TicketDetail.as_view(), name='ticketdetailtable'),
-    re_path(r'^api/(?P<ticket_id>[0-9]+)/$',
-        TicketDetailApi.as_view(), name='ticketdetail'),
+
     re_path(r'(?P<ticket_id>[0-9]+)/flowsteps',
         TicketFlowStep.as_view(), name='ticketflowsteps'),
     re_path(r'(?P<ticket_id>[0-9]+)/flowlogs',
@@ -27,4 +23,7 @@ urlpatterns = [
         TicketCreate.as_view(), name='ticketcreate'),
     re_path(r'^getusername/$',
         GetUserName.as_view(), name='getusername'),
+
+    re_path(r'(?P<ticket_id>[0-9]+)/beforeflowsteps',
+        TicketBeforeFlowStep.as_view(), name='ticketbeforeflowsteps'),
 ]
