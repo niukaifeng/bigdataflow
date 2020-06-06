@@ -110,6 +110,8 @@
 <link rel="stylesheet" href="{% static 'flatpickr/dist/flatpickr.min.css' %}">
 <!--toastr css-->
 <link rel="stylesheet" href="{% static "plugins/toastr/toastr.css" %}">
+
+
 <style type="text/css">
     #content {
         margin: 0 auto; max-width: 800px; padding: 0 20px;
@@ -123,8 +125,9 @@
     .object-controls {
         margin-top: 10px;
     }
-    .skip-page{
+    .skip-return{
         margin-left: 35px;
+        margin-bottom: 5px;
         font-size: 20px;
     }
     .col-md-swapper{
@@ -181,7 +184,7 @@
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
 {#        <li><a href="/">右上角动态导航</a></li>#}
-        <li class="active">工单详情</li>
+        <li class="active">上一步工单详情</li>
     </ol>
 </section>
 {{extra_content}}{% endblock %}
@@ -189,88 +192,48 @@
 
 {% block content %}
     <div class="row">
-        <fieldset>
-            <legend class='text-center text-info'> 业务流程</legend>
-        </fieldset>
-        <div class="col-md-12">
-            <ul class="nav nav-pills nav-justified step step-arrow" id='flowsteps'>
-            </ul>
-        </div>
-    </div>
 
-
-    <div class="row">
         <fieldset>
-            <legend class='text-center text-info'>工单详情</legend>
+            <a href="{% url 'ticketdetailtable' ticket_id %}" class="btn btn-default btn-flat skip-return ">返回</a>
+            <legend class='text-center text-info'>上一步工单详情</legend>
         </fieldset>
 
-        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">查看上一步工单详情</a>
 
-        <form id="id-m-form" action="" method="post" class="myform" role="form" enctype="multipart/form-data">
-            <div class="col-md-swapper">
-                {% if form.helper %}
-                    {% crispy form form.helper %}
-                {% else %}
-                    {% crispy form %}
-                {% endif %}
-                {% if showSuggestion %}
-                    <div class="form-table-group">
-                        <div class="form-group">
-                            <label for="suggestion" class="control-label col-md-label">处理意见</label>
-                            <div class="col-md-field">
-                                <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-                <div class="form-table-group inline_css">
-                    <div class="col-xs-offset-2 col-xs-10">
-                        {% block form_bottom_ext %}
-                        {% endblock %}
-                        {% block form_act_btns %}
-                        {% for button in buttons %}
-                            <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
-                        {% endfor %}
-                        {% if showSuggestion %}
+{#        <form id="id-m-form" action="" method="post" class="myform" role="form" enctype="multipart/form-data">#}
+{#            <div class="col-md-swapper">#}
+{#                {% if form.helper %}#}
+{#                    {% crispy form form.helper %}#}
+{#                {% else %}#}
+{#                    {% crispy form %}#}
+{#                {% endif %}#}
+{#                {% if showSuggestion %}#}
+{#                    <div class="form-table-group">#}
+{#                        <div class="form-group">#}
+{#                            <label for="suggestion" class="control-label col-md-label">处理意见</label>#}
+{#                            <div class="col-md-field">#}
+{#                                <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endif %}#}
+{#                <div class="form-table-group inline_css">#}
+{#                    <div class="col-xs-offset-2 col-xs-10">#}
+{#                        {% block form_bottom_ext %}#}
+{#                        {% endblock %}#}
+{#                        {% block form_act_btns %}#}
+{#                        {% for button in buttons %}#}
+{#                            <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>#}
+{#                        {% endfor %}#}
+{#                        {% if showSuggestion %}#}
 {#                            利用对处理意见的控件判断方法，没有控件显示时，取消按钮也不显示#}
-                            <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>
-                        {% endif %}
-                        {% endblock %}
-                    </div>
-                </div>
-                <input type="hidden" value="{{ title }}" name="title">
-            </div>
-        </form>
+{#                            <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>#}
+{#                        {% endif %}#}
+{#                        {% endblock %}#}
+{#                    </div>#}
+{#                </div>#}
+{#                <input type="hidden" value="{{ title }}" name="title">#}
+{#            </div>#}
+{#        </form>#}
     </div>
 
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="col-md-offset-3 col-md-9" id="commentbutton">
-            </div>
-        </div>
-    </div>
-
-
-    <!--block_three 操作日志-->
-    <div class="row">
-        <fieldset>
-            <legend class='text-center text-info'> 操作日志</legend>
-        </fieldset>
-
-        <div class="col-md-12">
-            <table class="table table-bordered gray-th wf-act-history">
-                <thead>
-                    <tr>
-                      <th>节点名称</th>
-                      <th>参与者</th>
-                      <th>操作时间</th>
-                      <th>处理意见</th>
-                    </tr>
-                </thead>
-                <tbody id='ticketlogs'>
-                </tbody>
-            </table>
-        </div>
-    </div>
 {% endblock %}
