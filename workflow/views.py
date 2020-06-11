@@ -176,11 +176,8 @@ class TicketDetail(LoginRequiredMixin, FormView):
         state_result = state_result['data']['value']
         state_result2 = state_result2['data']['value']
 
-        self.kwargs.update({'state_result': state_result})
-        self.kwargs.update({'title': state_result["title"]})
-        self.kwargs.update({'state_result2': state_result2})
-        if (len(state_result['field_list']) != 0):
-            self.kwargs.update({'showSuggestion': 'true'})
+
+        out_list = list();
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
@@ -196,13 +193,26 @@ class TicketDetail(LoginRequiredMixin, FormView):
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
             for field in state_result['field_list']:
-                Util.createWebDirex(field, forms, form_fields, User)
+
+                attributeFlag = field["field_attribute"]
+                # 1只读，2必填，3选填
+                #创建时候，只有是必须填写或者选填的才进行渲染
+                if  attributeFlag != 1 :
+                    out_list.append(field)
+                    Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
-                if field['field_attribute'] == 1:
-                    form_fields[field['field_key']
-                    ].widget.attrs['disabled'] = 'disabled'
+                # if field['field_attribute'] == 1:
+                #     form_fields[field['field_key']
+                #     ].widget.attrs['disabled'] = 'disabled'
         else:
             raise Http404()
+
+        state_result['field_list'] = out_list
+        self.kwargs.update({'state_result': state_result})
+        self.kwargs.update({'title': state_result["title"]})
+        self.kwargs.update({'state_result2': state_result2})
+        if (len(state_result['field_list']) != 0):
+            self.kwargs.update({'showSuggestion': 'true'})
         return type('DynamicItemsForm', (DynamicForm,), form_fields)
 
     def get_context_data(self, **kwargs):
@@ -221,7 +231,6 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         # title 文件存储的路径
         context['title'] = self.kwargs.get('title')
-
 
         #按钮显示
         context['buttons'] = state_result2
@@ -433,12 +442,7 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
 
         state_result = state_result['data']['value']
 
-
-        self.kwargs.update({'state_result': state_result})
-        self.kwargs.update({'title': state_result["title"]})
-
-        if (len(state_result['field_list']) != 0):
-            self.kwargs.update({'showSuggestion': 'true'})
+        out_list = list();
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
@@ -455,13 +459,25 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
             for field in state_result['field_list']:
-                Util.createWebDirex(field, forms, form_fields, User)
+
+                attributeFlag = field["field_attribute"]
+                # 1只读，2必填，3选填
+                # 创建时候，只有是必须填写或者选填的才进行渲染
+                if attributeFlag == 1:
+                    out_list.append(field)
+                    Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
                 if field['field_attribute'] == 1:
                     form_fields[field['field_key']
                     ].widget.attrs['disabled'] = 'disabled'
         else:
             raise Http404()
+
+        state_result['field_list'] = out_list
+        self.kwargs.update({'state_result': state_result})
+        self.kwargs.update({'title': state_result["title"]})
+
+
         return type('DynamicItemsForm', (DynamicForm,), form_fields)
 
     def get_context_data(self, **kwargs):
@@ -474,8 +490,7 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
 
         # 查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
-        # 画面显示“处理意见”控件
-        context['showSuggestion'] = self.kwargs.get('showSuggestion')
+
 
         # title 文件存储的路径
         context['title'] = self.kwargs.get('title')

@@ -1,26 +1,96 @@
 {% extends 'adminlte/base.html' %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
-
+{#{% load crispy_forms_tags %}#}
 {% if title %}
     {% block title %}
         工单详情
     {% endblock %}
 {% endif %}
 {% block js %}
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
+<script type="text/javascript" src="{% static "plugins/steps/lib.js" %}"></script>
+<!-- toastr js-->
+<script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
+<script type="text/javascript" src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
 <script type="application/javascript">
 
 </script>
 {% endblock %}
 {% block css %}
-    <style type="text/css">
+<link rel="stylesheet" type="text/css" href="{% static 'datatables/media/css/dataTables.bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'select2/dist/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'select2-bootstrap-theme/dist/select2-bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static "css/workflow.css" %}" />
+<link rel="stylesheet" href="{% static "css/lbadminlte.css" %}" />
+<link rel="stylesheet" href="{% static "plugins/steps/style.css" %}" />
+<link rel="stylesheet" href="{% static 'flatpickr/dist/flatpickr.min.css' %}">
+<!--toastr css-->
+<link rel="stylesheet" href="{% static "plugins/toastr/toastr.css" %}">
+<style type="text/css">
+    #content {
+        margin: 0 auto; max-width: 800px; padding: 0 20px;
+    }
+    .object-list {
+        margin-top: 30px;
+    }
+    .object {
+        margin-bottom: 30px;
+    }
+    .object-controls {
+        margin-top: 10px;
+    }
+    .skip-page{
+        margin-left: 35px;
+        font-size: 20px;
+    }
+    .col-md-swapper{
+        width: 100%;
+        height: 100%;
+        margin:20px 0 20px 6px;
+        display: inline-block;
+    }
 
-
+    .form-table-group{
+        width:calc(calc(100% / 2) - 20px);
+        height: 40px;
+        margin-bottom: 20px;
+        display: inherit;
+    }
+    .form-horizontal{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .col-md-label{
+        display: block;
+        width:240px;
+        margin-left: 30px;
+    }
+    .col-md-field{
+        display: block;
+        width:400px;
+        margin-left: 30px;
+    }
+    .form-group{
+        display: flex;
+        flex-direction: row;
+        width:500px;
+        height: 50px;
+    }
+    textarea{
+        width:100% !important;
+        height:100% !important;
+    }
+    .inline_css{
+        display: inline !important;
+    }
 </style>
 {% endblock %}
 
-
-
+{% block head_ext %}
+<!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
         {{app_label}}
@@ -28,12 +98,22 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
-        <li class="active">返回</li>
+
+        <li class="active">上一步处理详细</li>
     </ol>
-
-    <!-- 显示历史 -->
-
-    <div>
-
-    </div>
 </section>
+{{extra_content}}{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <a href="javascript:void(0)" class="skip-page"  onclick="history.back()" style="text-decoration:underline;">返回审核</a>
+        <div class="col-md-swapper">
+            {% if form.helper %}
+                {% crispy form form.helper %}
+            {% else %}
+                {% crispy form %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
