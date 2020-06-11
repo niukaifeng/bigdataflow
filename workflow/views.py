@@ -375,7 +375,6 @@ class TicketFlowlog(LoginRequiredMixin,View):
     """
     工单流转记录
     """
-
     def get(self, request, *args, **kwargs):
         request_data = request.GET
         ticket_id = kwargs.get('ticket_id')
@@ -388,6 +387,25 @@ class TicketFlowlog(LoginRequiredMixin,View):
         status,state_result = ins.getdata(parameters={},method='get',url='/api/v1.0/tickets/{0}/flowlogs'.format(self.kwargs.get('ticket_id')))
         return JsonResponse(data=state_result)
 
+class TicketFlowBack(LoginRequiredMixin,View):
+
+    def get(self, request, *args, **kwargs):
+        request_data = request.GET
+        ticket_id = kwargs.get('ticket_id')
+        username = request_data.get(
+            'username', request.user.username)  # 可用于权限控制
+        suggestion = request_data.get('suggestion')
+        transitionid = request_data.get('transitionid')
+        #
+        form_data = dict();
+        form_data['suggestion'] = suggestion
+        form_data['transition_id'] = int(transitionid)
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status, state_result = ins.getdata(data=form_data, method='patch',
+                                           url='/api/v1.0/tickets/{0}'.format(ticket_id))
+        return JsonResponse(data=state_result)
+
+
 # 获取此时登录网页的用户名    by kf
 class GetUserName(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
@@ -398,78 +416,70 @@ class GetUserName(LoginRequiredMixin,View):
             data = None
         return JsonResponse(data={'username':data})
 
-#在工单详情页面中点击“查看上部工作流操作详情”跳转的页面处理函数  by kf
-class TicketBeforeFlowStep(LoginRequiredMixin, TemplateView):
+#在工单详情页面中点击“查看上部工作流操作详情”跳转的页面处理函数
+class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
     template_name = 'workflow/ticketbeforeflowsteps.html'
     success_url = "/"
 
-    # def get_form_class(self):
-    #     form_fields = dict()
-    #     ticket_id = self.kwargs.get('ticket_id')
-    #
-    #     ins = WorkFlowAPiRequest(username=self.request.user.username)
-    #
-    #     # 获取组建
-    #     status, state_result = ins.getdata(parameters={}, method='get',
-    #                                        url='/api/v1.0/tickets/{0}'.format(ticket_id))
-    #     # 获取提交按钮
-    #     status2, state_result2 = ins.getdata(parameters={}, method='get',
-    #                                          url='/api/v1.0/tickets/{0}/transitions'.format(
-    #                                              self.kwargs.get('ticket_id')))
-    #
-    #     state_result = state_result['data']['value']
-    #     state_result2 = state_result2['data']['value']
-    #
-    #     self.kwargs.update({'state_result': state_result})
-    #     self.kwargs.update({'title': state_result["title"]})
-    #     self.kwargs.update({'state_result2': state_result2})
-    #     if (len(state_result['field_list']) != 0):
-    #         self.kwargs.update({'showSuggestion': 'true'})
-    #
-    #     if isinstance(state_result, dict) and 'field_list' in state_result.keys():
-    #         class DynamicForm(forms.Form):
-    #             def __init__(self, *args, **kwargs):
-    #                 self.helper = FormHelper()
-    #                 self.helper.form_class = 'form-horizontal'
-    #                 self.helper.form_action = " "
-    #                 self.helper.label_class = 'col-md-label'
-    #                 self.helper.field_class = 'col-md-field'
-    #                 # DictionaryField bug
-    #                 self.helper.layout = Layout(
-    #                     *[Div(field['field_key'], css_class='form-table-group') for field in
-    #                       state_result['field_list']])
-    #                 super(DynamicForm, self).__init__(*args, **kwargs)
-    #
-    #         for field in state_result['field_list']:
-    #             Util.createWebDirex(field, forms, form_fields, User)
-    #             # handle read only field
-    #             if field['field_attribute'] == 1:
-    #                 form_fields[field['field_key']
-    #                 ].widget.attrs['disabled'] = 'disabled'
-    #     else:
-    #         raise Http404()
-    #     return type('DynamicItemsForm', (DynamicForm,), form_fields)
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super(TicketBeforeFlowStep, self).get_context_data(**kwargs)
-    #
-    #     state_result = self.kwargs.get('state_result', None)
-    #     state_result2 = self.kwargs.get('state_result2', None)
-    #
-    #     # 为了组建显示
-    #     context['state_result'] = state_result
-    #
-    #     # 查找日志
-    #     context['ticket_id'] = self.kwargs.get('ticket_id')
-    #     # 画面显示“处理意见”控件
-    #     context['showSuggestion'] = self.kwargs.get('showSuggestion')
-    #
-    #     # title 文件存储的路径
-    #     context['title'] = self.kwargs.get('title')
-    #
-    #     # 按钮显示
-    #     context['buttons'] = state_result2
-    #
-    #     return context
+    def get_form_class(self):
+        form_fields = dict()
+        ticket_id = self.kwargs.get('ticket_id')
+
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+
+        # 获取组建
+        status, state_result = ins.getdata(parameters={}, method='get',
+                                           url='/api/v1.0/tickets/{0}'.format(ticket_id))
+
+        state_result = state_result['data']['value']
+
+
+        self.kwargs.update({'state_result': state_result})
+        self.kwargs.update({'title': state_result["title"]})
+
+        if (len(state_result['field_list']) != 0):
+            self.kwargs.update({'showSuggestion': 'true'})
+
+        if isinstance(state_result, dict) and 'field_list' in state_result.keys():
+            class DynamicForm(forms.Form):
+                def __init__(self, *args, **kwargs):
+                    self.helper = FormHelper()
+                    self.helper.form_class = 'form-horizontal'
+                    self.helper.form_action = " "
+                    self.helper.label_class = 'col-md-label'
+                    self.helper.field_class = 'col-md-field'
+                    # DictionaryField bug
+                    self.helper.layout = Layout(
+                        *[Div(field['field_key'], css_class='form-table-group') for field in
+                          state_result['field_list']])
+                    super(DynamicForm, self).__init__(*args, **kwargs)
+
+            for field in state_result['field_list']:
+                Util.createWebDirex(field, forms, form_fields, User)
+                # handle read only field
+                if field['field_attribute'] == 1:
+                    form_fields[field['field_key']
+                    ].widget.attrs['disabled'] = 'disabled'
+        else:
+            raise Http404()
+        return type('DynamicItemsForm', (DynamicForm,), form_fields)
+
+    def get_context_data(self, **kwargs):
+        context = super(TicketBeforeFlowStep, self).get_context_data(**kwargs)
+
+        state_result = self.kwargs.get('state_result', None)
+
+        # 为了组建显示
+        context['state_result'] = state_result
+
+        # 查找日志
+        context['ticket_id'] = self.kwargs.get('ticket_id')
+        # 画面显示“处理意见”控件
+        context['showSuggestion'] = self.kwargs.get('showSuggestion')
+
+        # title 文件存储的路径
+        context['title'] = self.kwargs.get('title')
+
+        return context
 
 

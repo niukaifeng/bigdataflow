@@ -97,6 +97,43 @@
 
     $('button[type=submit]').on('click', function(e) {
         $(this).append('<input type="hidden" name="transition_id" value="'+ $(this).attr('transition_id') +'" /> ');
+
+        var tranid = $(this).attr('transition_id');
+
+        //id 是7 的时候 就是驳回操作
+        //这边的操作有点特殊因为，如果是直接提交表单的话他的check都是在后台写的，所以自己写一个提交路径去提交数据
+        if (tranid == 7){
+
+            var inputs = $("form input");
+            for (var i = 0;i<inputs.length;i++){
+                var inputname = $(inputs[i]).attr("name");
+                if (inputname!=undefined && inputname != ''){
+                    $(inputs[i]).removeAttr("required");
+                }
+            }
+
+            var suggestion = $("#suggestion").val();
+            var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+            var tranid = $(this).attr('transition_id');
+            var formdata  = {
+                "csrfmiddlewaretoken":csrfmiddlewaretoken,
+                "suggestion":suggestion,
+                "username":'{{request.user.username}}',
+                "transitionid":tranid
+            };
+
+            $.ajax({
+                url: '{% url 'returnflowlogsback' ticket_id%}',
+                type: 'GET',
+                data: formdata,
+                success: function(data, textStatus, jqXHR) {
+                   window.location.href="/";
+                },
+                error: function(data, textStatus, jqXHR) {
+                    toastr['error'](data);
+                }
+            });
+        }
     });
 </script>
 {% endblock %}
@@ -204,7 +241,7 @@
             <legend class='text-center text-info'>工单详情</legend>
         </fieldset>
 
-        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">查看上一步工单详情</a>
+        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">以前的操作记录</a>
 
         <form id="id-m-form" action="" method="post" class="myform" role="form" enctype="multipart/form-data">
             <div class="col-md-swapper">
@@ -232,7 +269,7 @@
                             <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>
                         {% endfor %}
                         {% if showSuggestion %}
-{#                            利用对处理意见的控件判断方法，没有控件显示时，取消按钮也不显示#}
+                            {#利用对处理意见的控件判断方法，没有控件显示时，取消按钮也不显示#}
                             <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>
                         {% endif %}
                         {% endblock %}

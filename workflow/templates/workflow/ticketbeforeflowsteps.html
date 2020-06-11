@@ -1,181 +1,26 @@
 {% extends 'adminlte/base.html' %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
-{#{% load crispy_forms_tags %}#}
+
 {% if title %}
     {% block title %}
         工单详情
     {% endblock %}
 {% endif %}
 {% block js %}
-<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
-<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
-<script type="text/javascript" src="{% static "plugins/steps/lib.js" %}"></script>
-<!-- toastr js-->
-<script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
-<script type="text/javascript" src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
-<script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
 <script type="application/javascript">
-    var array_name = [];   //field_name
-	var array_key = [];   //field_key
-	var array_data = [];  //value
 
-    $('.dateinput').flatpickr();
-    $('.datetimeinput').flatpickr({
-        enableTime: true,
-        time_24hr: true,
-        dateFormat: 'Y-m-d H:i:S',
-        enableSeconds:true
-    });
-
-    function objectifyForm(formArray) {//serialize data function
-        var returnArray = {};
-        for (var i = 0; i < formArray.length; i++){
-            returnArray[formArray[i]['name']] = formArray[i]['value'];
-        }
-        {#console.log(returnArray)#}
-        return returnArray;
-    }
-
-    function getformdata(transition_id){
-        var data = $("#id-m-form").serializeArray();
-        console.log(transition_id);
-        return objectifyForm(data);
-    }
-    //获取操作的流程
-    $.ajax({
-        url: '{% url 'ticketflowsteps' ticket_id%}',
-        type: 'GET',
-        data: {'username':'{{request.user.username}}'},
-        success: function(data, textStatus, jqXHR) {
-            {#step来记录节点，进行前端渲染#}
-            var step = 1 ;
-            if (data.code == 0){
-                var html = '';
-                for (var i = 0; i < data.data.value.length; i++) {
-                    {#用当前current_state_id来判断节点#}
-                    var currentId = data.data.current_state_id;
-                    if (data.data.value[i].state_id == currentId){
-                        step= i;
-                    }
-                    html += '<li><a>'+ data.data.value[i].state_name + '</a></li>';
-                }
-                $('#flowsteps').append(html);
-                    bsStep(step+1);
-            }else{
-                toastr['warning'](data.msg);
-            }
-        },
-        error: function(data, textStatus, jqXHR) {
-            toastr['error'](data);
-        }
-    });
-    //获取操作的日志
-    $.ajax({
-        url: '{% url 'ticketflowlogs' ticket_id%}',
-        type: 'GET',
-        data: {'username':'{{request.user.username}}'},
-        success: function(data, textStatus, jqXHR) {
-                if (data.code == 0){
-                    var html = '';
-                    for (var i = 0; i < data.data.value.length; i++) {
-                        if ( data.data.value[i].suggestion ==''){
-                            html += '<tr><td>'+data.data.value[i].state.state_name+'</td><td>'+data.data.value[i].participant+'</td><td>'+data.data.value[i].gmt_created+'</td><td>'+'--------'+'</td></tr>';
-                        }else{
-                            html += '<tr><td>'+data.data.value[i].state.state_name+'</td><td>'+data.data.value[i].participant+'</td><td>'+data.data.value[i].gmt_created+'</td><td>'+data.data.value[i].suggestion+'</td></tr>';
-                        }
-                    }
-                    $('#ticketlogs').append(html);
-                }else{
-                    toastr['warning'](data.msg);
-                }
-        },
-        error: function(data, textStatus, jqXHR) {
-            toastr['error'](data);
-        }
-    });
-
-    $('button[type=submit]').on('click', function(e) {
-        $(this).append('<input type="hidden" name="transition_id" value="'+ $(this).attr('transition_id') +'" /> ');
-    });
 </script>
 {% endblock %}
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{% static 'datatables/media/css/dataTables.bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static 'select2/dist/css/select2.min.css' %}">
-<link rel="stylesheet" href="{% static 'select2-bootstrap-theme/dist/select2-bootstrap.min.css' %}">
-<link rel="stylesheet" href="{% static "css/workflow.css" %}" />
-<link rel="stylesheet" href="{% static "css/lbadminlte.css" %}" />
-<link rel="stylesheet" href="{% static "plugins/steps/style.css" %}" />
-<link rel="stylesheet" href="{% static 'flatpickr/dist/flatpickr.min.css' %}">
-<!--toastr css-->
-<link rel="stylesheet" href="{% static "plugins/toastr/toastr.css" %}">
+    <style type="text/css">
 
-
-<style type="text/css">
-    #content {
-        margin: 0 auto; max-width: 800px; padding: 0 20px;
-    }
-    .object-list {
-        margin-top: 30px;
-    }
-    .object {
-        margin-bottom: 30px;
-    }
-    .object-controls {
-        margin-top: 10px;
-    }
-    .skip-return{
-        margin-left: 35px;
-        margin-bottom: 5px;
-        font-size: 20px;
-    }
-    .col-md-swapper{
-        width: 100%;
-        height: 100%;
-        margin:20px 0 20px 6px;
-        display: inline-block;
-    }
-
-    .form-table-group{
-        width:calc(calc(100% / 2) - 20px);
-        height: 40px;
-        margin-bottom: 20px;
-        display: inherit;
-    }
-    .form-horizontal{
-        display: flex;
-        flex-wrap: wrap;
-    }
-    .col-md-label{
-        display: block;
-        width:240px;
-        margin-left: 30px;
-    }
-    .col-md-field{
-        display: block;
-        width:400px;
-        margin-left: 30px;
-    }
-    .form-group{
-        display: flex;
-        flex-direction: row;
-        width:500px;
-        height: 50px;
-    }
-    textarea{
-        width:100% !important;
-        height:100% !important;
-    }
-    .inline_css{
-        display: inline !important;
-    }
 
 </style>
 {% endblock %}
 
-{% block head_ext %}
-<!-- Content Header (Page header) -->
+
+
 <section class="content-header">
     <h1>
         {{app_label}}
@@ -183,57 +28,12 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
-{#        <li><a href="/">右上角动态导航</a></li>#}
-        <li class="active">上一步工单详情</li>
+        <li class="active">返回</li>
     </ol>
-</section>
-{{extra_content}}{% endblock %}
 
+    <!-- 显示历史 -->
 
-{% block content %}
-    <div class="row">
+    <div>
 
-        <fieldset>
-            <a href="{% url 'ticketdetailtable' ticket_id %}" class="btn btn-default btn-flat skip-return ">返回</a>
-            <legend class='text-center text-info'>上一步工单详情</legend>
-        </fieldset>
-
-
-{#        <form id="id-m-form" action="" method="post" class="myform" role="form" enctype="multipart/form-data">#}
-{#            <div class="col-md-swapper">#}
-{#                {% if form.helper %}#}
-{#                    {% crispy form form.helper %}#}
-{#                {% else %}#}
-{#                    {% crispy form %}#}
-{#                {% endif %}#}
-{#                {% if showSuggestion %}#}
-{#                    <div class="form-table-group">#}
-{#                        <div class="form-group">#}
-{#                            <label for="suggestion" class="control-label col-md-label">处理意见</label>#}
-{#                            <div class="col-md-field">#}
-{#                                <textarea name="suggestion" cols="20" rows="10" placeholder="处理意见" class="textarea form-control" id="suggestion"></textarea>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% endif %}#}
-{#                <div class="form-table-group inline_css">#}
-{#                    <div class="col-xs-offset-2 col-xs-10">#}
-{#                        {% block form_bottom_ext %}#}
-{#                        {% endblock %}#}
-{#                        {% block form_act_btns %}#}
-{#                        {% for button in buttons %}#}
-{#                            <button type="submit" class="btn btn-primary" transition_id='{{button.transition_id}}'>{{button.transition_name}}</button>#}
-{#                        {% endfor %}#}
-{#                        {% if showSuggestion %}#}
-{#                            利用对处理意见的控件判断方法，没有控件显示时，取消按钮也不显示#}
-{#                            <button type="button" class="btn btn-default goback" onclick="history.back()">取消</button>#}
-{#                        {% endif %}#}
-{#                        {% endblock %}#}
-{#                    </div>#}
-{#                </div>#}
-{#                <input type="hidden" value="{{ title }}" name="title">#}
-{#            </div>#}
-{#        </form>#}
     </div>
-
-{% endblock %}
+</section>

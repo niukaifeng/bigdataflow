@@ -1,6 +1,6 @@
 from django.conf.urls import url, include,re_path
 
-from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep# , TicketDetail, TicketCreate
+from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep# , TicketDetail, TicketCreate
 
 
 urlpatterns = [
@@ -15,8 +15,13 @@ urlpatterns = [
 
     re_path(r'(?P<ticket_id>[0-9]+)/flowsteps',
         TicketFlowStep.as_view(), name='ticketflowsteps'),
+
     re_path(r'(?P<ticket_id>[0-9]+)/flowlogs',
         TicketFlowlog.as_view(), name='ticketflowlogs'),
+
+    re_path(r'(?P<ticket_id>[0-9]+)/returnflowlogsback',
+            TicketFlowBack.as_view(), name='returnflowlogsback'),
+
     re_path(r'(?P<ticket_id>[0-9]+)/transitions',
         TicketTransition.as_view(), name='tickettranstion'),
     re_path(r'^ticket/(?P<workflow_id>[0-9]+)/new/$',
