@@ -1,6 +1,6 @@
 from django.conf.urls import url, include,re_path
 
-from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep# , TicketDetail, TicketCreate
+from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,MyToDoTicket,MyRelatedTicket,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
 
 
 urlpatterns = [
@@ -31,4 +31,7 @@ urlpatterns = [
 
     re_path(r'(?P<ticket_id>[0-9]+)/beforeflowsteps',
         TicketBeforeFlowStep.as_view(), name='ticketbeforeflowsteps'),
+
+    re_path(r'(?P<ticket_id>[0-9]+)/download_file',
+            downloadFile.as_view(), name='download_file'),
 ]

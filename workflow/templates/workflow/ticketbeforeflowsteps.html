@@ -116,4 +116,13 @@
             {% endif %}
         </div>
     </div>
+     <div class="row">
+
+        {% if file_out_list_flag %}
+            上传的文件
+        {% endif %}
+        {% for file in file_out_list %}
+            <a href="{{file.download_path}}">{{ file.link_name }}</a>
+        {% endfor %}
+     </div>
 {% endblock %}
