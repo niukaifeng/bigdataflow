@@ -102,7 +102,7 @@
 
         //id 是7 的时候 就是驳回操作
         //这边的操作有点特殊因为，如果是直接提交表单的话他的check都是在后台写的，所以自己写一个提交路径去提交数据
-        if (tranid == 7){
+        if ($(this).prop("innerText") == "驳回"){
 
             var inputs = $("form input");
             for (var i = 0;i<inputs.length;i++){

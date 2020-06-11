@@ -461,6 +461,7 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
             for field in state_result['field_list']:
 
                 attributeFlag = field["field_attribute"]
+                field["default_value"] = field["field_value"]
                 # 1只读，2必填，3选填
                 # 创建时候，只有是必须填写或者选填的才进行渲染
                 if attributeFlag == 1:
