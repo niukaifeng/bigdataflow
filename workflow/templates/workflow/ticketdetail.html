@@ -121,18 +121,25 @@
                 "username":'{{request.user.username}}',
                 "transitionid":tranid
             };
-
-            $.ajax({
-                url: '{% url 'returnflowlogsback' ticket_id%}',
-                type: 'GET',
-                data: formdata,
-                success: function(data, textStatus, jqXHR) {
-                   window.location.href="/";
-                },
-                error: function(data, textStatus, jqXHR) {
-                    toastr['error'](data);
-                }
+            var myfunction  = (formdata => {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '{% url 'returnflowlogsback' ticket_id%}',
+                        type: 'GET',
+                        data: formdata,
+                        success: function(data, textStatus, jqXHR) {
+                           window.location.href="/";
+                        },
+                        error: function(data, textStatus, jqXHR) {
+                            toastr['error'](data);
+                        }
+                    });
+                });
             });
+            async function doget() {
+                myfunction(formdata);
+            }
+            doget();
         }
     });
 </script>

@@ -6,7 +6,7 @@ try:
 except ImportError:
     import json
 from django import forms
-from django.http import Http404,JsonResponse
+from django.http import Http404, JsonResponse, FileResponse
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field
@@ -425,6 +425,21 @@ class GetUserName(LoginRequiredMixin,View):
             data = None
         return JsonResponse(data={'username':data})
 
+    # 获取此时登录网页的用户名    by kf
+class downloadFile(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        path = request.GET.get('path')
+
+        file = open(path,'rb')
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="'+path.split("/")[len(path.split("/"))-1]+'"'
+        return response
+
+
+
+
+
 #在工单详情页面中点击“查看上部工作流操作详情”跳转的页面处理函数
 class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
     template_name = 'workflow/ticketbeforeflowsteps.html'
@@ -443,6 +458,7 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
         state_result = state_result['data']['value']
 
         out_list = list();
+        file_out_list = list();
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
@@ -465,6 +481,28 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                 # 1只读，2必填，3选填
                 # 创建时候，只有是必须填写或者选填的才进行渲染
                 if attributeFlag == 1:
+                    if  field['field_type_id'] == 80:
+                        #控件是文件类型，画面中生成<a>标签就可以
+                        item = dict()
+                        path  = field['field_value'];
+                        mypath= "."
+                        index = 0
+                        contineFlag =  0
+                        for file_path_part in path.split("/"):
+                            if (contineFlag == 1 or file_path_part == "media"):
+                                mypath += "/" + file_path_part
+                                contineFlag =1
+                            else :
+                                index += 1
+                                continue
+
+
+                        file_name = path.split("/")[len(path.split("/"))-1]
+
+                        item['download_path'] = "/workflow/"+ticket_id+"/download_file?path="+mypath
+                        item['link_name'] = file_name[10::]
+                        file_out_list.append(item)
+                        continue
                     out_list.append(field)
                     Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
@@ -476,6 +514,8 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
 
         state_result['field_list'] = out_list
         self.kwargs.update({'state_result': state_result})
+        #file_out_list
+        self.kwargs.update({'file_out_list': file_out_list})
         self.kwargs.update({'title': state_result["title"]})
 
 
@@ -486,8 +526,16 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
 
         state_result = self.kwargs.get('state_result', None)
 
+        file_out_list = self.kwargs.get('file_out_list', None)
+
         # 为了组建显示
         context['state_result'] = state_result
+
+        if len(file_out_list) != 0 :
+            context['file_out_list_flag'] = "true"
+
+        # 文件
+        context['file_out_list'] = file_out_list
 
         # 查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
