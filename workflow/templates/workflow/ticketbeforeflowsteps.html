@@ -127,7 +127,7 @@
         {% endif %}
         <div class="file-swapper">
             {% for file in file_out_list %}
-                <a href="{{file.download_path}}">{{ file.link_name }}</a>
+                <span>{{ file.field_name }}</span>&nbsp;&nbsp;:&nbsp;&nbsp;<a href="{{file.download_path}}">{{ file.link_name }}</a>
                 <br><br>
             {% endfor %}
         </div>
