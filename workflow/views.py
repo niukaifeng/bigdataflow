@@ -486,19 +486,15 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                         item = dict()
                         path  = field['field_value'];
                         mypath= "."
-                        index = 0
                         contineFlag =  0
                         for file_path_part in path.split("/"):
                             if (contineFlag == 1 or file_path_part == "media"):
                                 mypath += "/" + file_path_part
                                 contineFlag =1
                             else :
-                                index += 1
                                 continue
-
-
                         file_name = path.split("/")[len(path.split("/"))-1]
-
+                        item['field_name'] = field["field_name"]
                         item['download_path'] = "/workflow/"+ticket_id+"/download_file?path="+mypath
                         item['link_name'] = file_name[10::]
                         file_out_list.append(item)
