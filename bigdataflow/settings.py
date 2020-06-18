@@ -164,10 +164,10 @@ SESSION_COOKIE_NAME = 'bigdataflowsession'
 LOGIN_REDIRECT_URL = '/'
 
 # 以下为loonflow后端地址及在loonflow中配置的授权应用及token. 初始化sql中是此记录，如果有在loonflow中修改，此处也需要相应修改
-WORKFLOWBACKENDURL = "http://39.106.36.234:6060"
-WORKFLOWTOKEN = "dc84bc8c-9c9d-11ea-b6f0-a3680e98fe31"
-WORKFLOWAPPNAME = "bigdataflow"
+# WORKFLOWBACKENDURL = "http://39.106.36.234:6060"
+# WORKFLOWTOKEN = "dc84bc8c-9c9d-11ea-b6f0-a3680e98fe31"
+# WORKFLOWAPPNAME = "bigdataflow"
 
-# WORKFLOWBACKENDURL = "http://39.106.36.234:6070"
-# WORKFLOWTOKEN = "468c28dc-a4b5-11ea-83c7-a3680e98fe31"
-# WORKFLOWAPPNAME = "app"
+WORKFLOWBACKENDURL = "http://39.106.36.234:6070"
+WORKFLOWTOKEN = "71180d6e-ae15-11ea-9163-a3680e98fe31"
+WORKFLOWAPPNAME = "110"
