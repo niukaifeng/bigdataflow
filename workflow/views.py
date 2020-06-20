@@ -110,7 +110,8 @@ class TicketCreate(LoginRequiredMixin, FormView):
                 #存放
                 file = form.files[file_key].file
                 file_name  = form.files[file_key].name
-                form_data[file_key] = os.path.abspath(os.curdir)+'/media/' + title +'/'+str(int(time.time()))+file_name
+                curr_time = datetime.datetime.now()
+                form_data[file_key] = os.path.abspath(os.curdir)+ '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + file_name
                 Util.saveFile(file,form_data[file_key])
 
             for key, value in form_data.items():
@@ -255,7 +256,9 @@ class TicketDetail(LoginRequiredMixin, FormView):
                 # 存放
                 file = form.files[file_key].file
                 file_name = form.files[file_key].name
-                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/" + str(int(time.time())) + file_name
+                curr_time = datetime.datetime.now()
+                # form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title + '/' + str(int(time.time())) + file_name
+                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + file_name
                 Util.saveFile(file, form_data[file_key])
 
             for key, value in form_data.items():
@@ -477,6 +480,7 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
             for field in state_result['field_list']:
 
                 attributeFlag = field["field_attribute"]
+                # 将控件的值提读出来
                 field["default_value"] = field["field_value"]
                 # 1只读，2必填，3选填
                 # 创建时候，只有是必须填写或者选填的才进行渲染
@@ -484,21 +488,26 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                     if  field['field_type_id'] == 80:
                         #控件是文件类型，画面中生成<a>标签就可以
                         item = dict()
-                        path  = field['field_value'];
-                        mypath= "."
-                        contineFlag =  0
-                        for file_path_part in path.split("/"):
-                            if (contineFlag == 1 or file_path_part == "media"):
-                                mypath += "/" + file_path_part
-                                contineFlag =1
-                            else :
-                                continue
-                        file_name = path.split("/")[len(path.split("/"))-1]
-                        item['field_name'] = field["field_name"]
-                        item['download_path'] = "/workflow/"+ticket_id+"/download_file?path="+mypath
-                        item['link_name'] = file_name[10::]
-                        file_out_list.append(item)
-                        continue
+                        path = field['field_value']
+                        if path == None:
+                            continue
+                        else:
+                            # if path == None:
+                            # mypath= "."
+                            # contineFlag =  0
+                            # path1 = path.split("/")
+                            # for file_path_part in path1:
+                            #     if (contineFlag == 1 or file_path_part == "media"):
+                            #         mypath += "/" + file_path_part
+                            #         contineFlag =1
+                            #     else :
+                            #         continue
+                            file_name = path.split("/")[len(path.split("/"))-1]
+                            item['field_name'] = field["field_name"]
+                            item['download_path'] = "/workflow/"+ticket_id+"/download_file?path="+file_name
+                            item['link_name'] = file_name
+                            file_out_list.append(item)
+                            continue
                     out_list.append(field)
                     Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field

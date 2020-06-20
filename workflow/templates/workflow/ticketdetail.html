@@ -109,6 +109,7 @@
                 var inputname = $(inputs[i]).attr("name");
                 if (inputname!=undefined && inputname != ''){
                     $(inputs[i]).removeAttr("required");
+                    {#$(inputs[i]).prop("required",false);//用removeAttr在IE下不生效，改用prop()#}
                 }
             }
 
@@ -248,7 +249,7 @@
             <legend class='text-center text-info'>工单详情</legend>
         </fieldset>
 
-        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">以前的操作记录</a>
+        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">上一步的工单操作</a>
 
         <form id="id-m-form" action="" method="post" class="myform" role="form" enctype="multipart/form-data">
             <div class="col-md-swapper">
