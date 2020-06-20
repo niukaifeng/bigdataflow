@@ -15,6 +15,8 @@
 <script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
 <script type="text/javascript" src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
 <script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
+<script src="{% static 'flatpickr/dist/steps.min.js' %}"></script>
+
 <script type="application/javascript">
     var array_name = [];   //field_name
 	var array_key = [];   //field_key
@@ -50,18 +52,26 @@
         success: function(data, textStatus, jqXHR) {
             {#step来记录节点，进行前端渲染#}
             var step = 1 ;
+            var stepList = new Array();
+            var activeId = 0;
             if (data.code == 0){
                 var html = '';
                 for (var i = 0; i < data.data.value.length; i++) {
                     {#用当前current_state_id来判断节点#}
                     var currentId = data.data.current_state_id;
                     if (data.data.value[i].state_id == currentId){
-                        step= i;
+                        activeId = currentId;
                     }
-                    html += '<li><a>'+ data.data.value[i].state_name + '</a></li>';
+                    step0 ={title: data.data.value[i].state_name , description:''};
+                    stepList.push(step0);
                 }
-                $('#flowsteps').append(html);
-                    bsStep(step+1);
+                steps({
+                    el: "#flowsteps",
+                    data: stepList,
+                    sides: "two-sides",
+                    active: activeId
+                 });
+                //bsStep(step+1);
             }else{
                 toastr['warning'](data.msg);
             }
@@ -148,6 +158,7 @@
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'datatables/media/css/dataTables.bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'select2/dist/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'select2/dist/css/steps.min.css' %}">
 <link rel="stylesheet" href="{% static 'select2-bootstrap-theme/dist/select2-bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static "css/workflow.css" %}" />
 <link rel="stylesheet" href="{% static "css/lbadminlte.css" %}" />
@@ -238,8 +249,10 @@
             <legend class='text-center text-info'> 业务流程</legend>
         </fieldset>
         <div class="col-md-12">
-            <ul class="nav nav-pills nav-justified step step-arrow" id='flowsteps'>
-            </ul>
+
+            <div class = "ticketStep"  id="flowsteps">
+
+            </div>
         </div>
     </div>
 
