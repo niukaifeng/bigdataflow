@@ -221,10 +221,15 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         state_result = self.kwargs.get('state_result', None)
         state_result2 = self.kwargs.get('state_result2', None)
+        workflow_name = str(self.request.GET['workflow_name']).strip()
+        flow_code = state_result['sn']
+
+        flow_code = flow_code[flow_code.find("_")+1::]
 
         #为了组建显示
         context['state_result'] = state_result
-
+        context['workflow_name'] = workflow_name
+        context['flow_code'] = flow_code
         #查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
         # 画面显示“处理意见”控件

@@ -86,12 +86,12 @@
                         <tr>
                             <td>{{ticket.sn}}</td>
                             <td>{{ticket.title}}</td>
-                            <td>{{ticket.workflow.workflow_name}}</td>
+                            <td>{{ticket.workflow_info.workflow_name}}</td>
                             <td>{{ticket.state.state_name}}</td>
                             <td>{{ticket.creator}}</td>
                             <td>{{ticket.gmt_created}}</td>
                             <td>{{ticket.gmt_modified}}</td>
-                            <td><a href="{% url 'ticketdetailtable' ticket.id %}">详情</a></td>
+                            <td><a href="{% url 'ticketdetailtable' ticket.id %}?workflow_name= {{ticket.workflow_info.workflow_name}}">详情</a></td>
                         </tr>
                             {% endfor %}
                         {% endif %}
