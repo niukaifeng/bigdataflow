@@ -197,8 +197,10 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
                 attributeFlag = field["field_attribute"]
                 # 1只读，2必填，3选填
-                #创建时候，只有是必须填写或者选填的才进行渲染
+                #创建时候，只有是必须填写或者选填的才进行渲染  'field_key' (140598713991728) 'b_guanliyuanshenpi_char_xiangmubianhao'
                 if  attributeFlag != 1 :
+                    if field['field_key']  == 'b_guanliyuanshenpi_char_xiangmubianhao':
+                        field['field_attribute'] =  3
                     out_list.append(field)
                     Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
@@ -221,7 +223,10 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         state_result = self.kwargs.get('state_result', None)
         state_result2 = self.kwargs.get('state_result2', None)
-        workflow_name = str(self.request.GET['workflow_name']).strip()
+        workflow_name = ""
+        if 'workflow_name' in self.request.GET.keys() :
+            workflow_name = str(self.request.GET['workflow_name']).strip()
+
         flow_code = state_result['sn']
 
         flow_code = flow_code[flow_code.find("_")+1::]
