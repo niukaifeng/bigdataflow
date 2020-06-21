@@ -111,7 +111,7 @@ class TicketCreate(LoginRequiredMixin, FormView):
                 file = form.files[file_key].file
                 file_name  = form.files[file_key].name
                 curr_time = datetime.datetime.now()
-                form_data[file_key] = os.path.abspath(os.curdir)+ '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + file_name
+                form_data[file_key] = os.path.abspath(os.curdir)+ '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + '-' + str(curr_time.microsecond) + '_' + file_name
                 Util.saveFile(file,form_data[file_key])
 
             for key, value in form_data.items():
@@ -268,7 +268,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
                 file_name = form.files[file_key].name
                 curr_time = datetime.datetime.now()
                 # form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title + '/' + str(int(time.time())) + file_name
-                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + file_name
+                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + '-' + str(curr_time.microsecond) + '_' + file_name
                 Util.saveFile(file, form_data[file_key])
 
             for key, value in form_data.items():
@@ -502,19 +502,20 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                         if path == None:
                             continue
                         else:
-                            # if path == None:
-                            # mypath= "."
-                            # contineFlag =  0
-                            # path1 = path.split("/")
-                            # for file_path_part in path1:
-                            #     if (contineFlag == 1 or file_path_part == "media"):
-                            #         mypath += "/" + file_path_part
-                            #         contineFlag =1
-                            #     else :
-                            #         continue
-                            file_name = path.split("/")[len(path.split("/"))-1]
+                            mypath = "."
+                            index = 0
+                            contineFlag = 0
+                            for file_path_part in path.split("/"):
+                                if (contineFlag == 1 or file_path_part == "media"):
+                                    mypath += "/" + file_path_part
+                                    contineFlag = 1
+                                else:
+                                    index += 1
+                                    continue
+                            file_orgin = path.split("/")[len(path.split("/"))-1]
+                            file_name = file_orgin.split("_")[2]
                             item['field_name'] = field["field_name"]
-                            item['download_path'] = "/workflow/"+ticket_id+"/download_file?path="+file_name
+                            item['download_path'] = "/workflow/"+ticket_id+"/download_file?path="+mypath
                             item['link_name'] = file_name
                             file_out_list.append(item)
                             continue
