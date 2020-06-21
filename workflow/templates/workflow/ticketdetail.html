@@ -22,6 +22,14 @@
 	var array_key = [];   //field_key
 	var array_data = [];  //value
 
+    var project_id_dom  = $("input[name='b_guanliyuanshenpi_char_xiangmubianhao']");
+    project_id_dom.attr("disabled","disabled");
+
+    var dateTimeStamp = new Date();
+    var dateTimeStamp = dateTimeStamp.getTime();
+    project_id_dom.val(dateTimeStamp);
+    project_id_dom .attr("disable","true");
+
     $('.dateinput').flatpickr();
     $('.datetimeinput').flatpickr({
         enableTime: true,
@@ -60,7 +68,7 @@
                     {#用当前current_state_id来判断节点#}
                     var currentId = data.data.current_state_id;
                     if (data.data.value[i].state_id == currentId){
-                        activeId = currentId;
+                        activeId = currentId -1;
                     }
                     step0 ={title: data.data.value[i].state_name , description:''};
                     stepList.push(step0);
