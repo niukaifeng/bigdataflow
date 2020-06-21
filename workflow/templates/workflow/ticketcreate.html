@@ -3,7 +3,7 @@
 {% load staticfiles %}
 {% if title %}
     {% block title %}
-        新建工单
+        新建项目
     {% endblock %}
 {% endif %}
 {% block js %}
@@ -55,7 +55,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
-        <li class="active">我创建的工单</li>
+        <li class="active">我创建的项目</li>
     </ol>
 </section>
 {{extra_content}}{% endblock %}
@@ -67,7 +67,7 @@
                 <div class="box-header">
                 </div>
                 <div class="box-body">
-{#                    此段自动生成标题，文本框和工单标题提示  by  kf   #}
+{#                    此段自动生成标题，文本框和项目标题提示  by  kf   #}
                     {% if form.helper %}
                         {% crispy form form.helper %}
                     {% else %}

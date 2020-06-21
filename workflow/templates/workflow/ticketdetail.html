@@ -23,9 +23,11 @@
 	var array_data = [];  //value
 
     var project_id_dom  = $("input[name='b_guanliyuanshenpi_char_xiangmubianhao']");
+    var project_attention_dom  = $("textarea[name='g_sanfanghuiqian_text_sanfanghuiqian']");
     var workflow_name  =  $("input[name='workflow_name']").val();
     var flow_code =  $("input[name='flow_code']").val();
     project_id_dom.attr("disabled","disabled");
+    project_attention_dom.attr("disabled","disabled");
     project_id_dom.val(workflow_name +"_"+flow_code );
     project_id_dom .attr("disable","true");
 
@@ -244,7 +246,7 @@
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
 {#        <li><a href="/">右上角动态导航</a></li>#}
-        <li class="active">工单详情</li>
+        <li class="active">项目详情</li>
     </ol>
 </section>
 {{extra_content}}{% endblock %}
@@ -266,10 +268,10 @@
 
     <div class="row">
         <fieldset>
-            <legend class='text-center text-info'>工单详情</legend>
+            <legend class='text-center text-info'>项目详情</legend>
         </fieldset>
 
-        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">上一步的工单操作</a>
+        <a href="{% url 'ticketbeforeflowsteps' ticket_id %}" class="skip-page" style="text-decoration:underline;">项目已操作详情</a>
 
         <form id="id-m-form" action="" method="post" class="myform" role="form" enctype="multipart/form-data">
             <div class="col-md-swapper">
