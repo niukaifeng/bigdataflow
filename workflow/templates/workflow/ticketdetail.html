@@ -23,11 +23,10 @@
 	var array_data = [];  //value
 
     var project_id_dom  = $("input[name='b_guanliyuanshenpi_char_xiangmubianhao']");
+    var workflow_name  =  $("input[name='workflow_name']").val();
+    var flow_code =  $("input[name='flow_code']").val();
     project_id_dom.attr("disabled","disabled");
-
-    var dateTimeStamp = new Date();
-    var dateTimeStamp = dateTimeStamp.getTime();
-    project_id_dom.val(dateTimeStamp);
+    project_id_dom.val(workflow_name +"_"+flow_code );
     project_id_dom .attr("disable","true");
 
     $('.dateinput').flatpickr();
@@ -305,6 +304,8 @@
                     </div>
                 </div>
                 <input type="hidden" value="{{ title }}" name="title">
+                <input type="hidden" value="{{ workflow_name }}" name="workflow_name">
+                <input type="hidden" value="{{ flow_code }}" name="flow_code">
             </div>
         </form>
     </div>
