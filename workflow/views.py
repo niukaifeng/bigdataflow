@@ -268,15 +268,12 @@ class TicketDetail(LoginRequiredMixin, FormView):
         state_result = self.kwargs.get('state_result', None)
         state_result2 = self.kwargs.get('state_result2', None)
 
-        for result in state_result2:
-
-            if settings.WORKTEMPSAVEBUTTONNAME == result['transition_name']:
-                context['show_stpe'] = True
-                context['temp_savebutton'] = settings.FLOWINPUTSTR
-                break
-
-
-
+        if not state_result2 == None:
+            for result in state_result2:
+                if settings.WORKTEMPSAVEBUTTONNAME == result['transition_name']:
+                    context['show_stpe'] = True
+                    context['temp_savebutton'] = settings.FLOWINPUTSTR
+                    break
         workflow_name = ""
         if 'workflow_name' in self.request.GET.keys() :
             workflow_name = str(self.request.GET['workflow_name']).strip()
