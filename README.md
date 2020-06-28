@@ -38,3 +38,27 @@
 b_guanliyuanshenpi_char_xiangmubianhao
 
 g_sanfanghuiqian_text_sanfanghuiqian
+
+> 新增
+
+FLOWINPUTSTR
+   * 总恒阻锚索/米               j_shigongjindu_float_zonghengzumaosuo
+   * 当前已完成恒阻锚索/米        j_shigongjindu_float_muqianhengzumaosuo
+   * 总切缝钻孔/米               j_shigongjindu_float_zongqiefengzhuankong
+   * 当前已完成切缝钻孔/米        j_shigongjindu_float_muqianqiefengzhuankong
+   * 总爆破裂缝/米               j_shigongjindu_float_zongbaopoliefeng
+   * 当前已完成爆破裂缝/米        j_shigongjindu_float_muqianbaopoliefeng
+
+
+## 关于数据保存工单信息的想法
+
+> 进入 施工进度
+* 查看 -- 数据库查询数据
+* 保存 -- 数据库插入数据
+
+## TODO 顾
+[] 整合固定字段
+[] 单独显示进度条
+[] 数据柏村    
+
+
