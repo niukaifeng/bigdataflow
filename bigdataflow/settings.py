@@ -38,11 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ckeditor_uploader',
-
     'crispy_forms',
     'adminlte',
     'workflow',
-
 ]
 
 MIDDLEWARE = [
@@ -171,3 +169,6 @@ LOGIN_REDIRECT_URL = '/'
 WORKFLOWBACKENDURL = "http://39.106.36.234:6070"
 WORKFLOWTOKEN = "3c6e4bf8-b3ce-11ea-98f0-a3680e98fe31"
 WORKFLOWAPPNAME = "110"
+
+WORKTEMPSAVEBUTTONNAME = "提交施工进度数据"
+FLOWINPUTSTR = "j_shigongjindu_float_zonghengzumaosuo,j_shigongjindu_float_muqianhengzumaosuo,j_shigongjindu_float_zongqiefengzhuankong,j_shigongjindu_float_muqianqiefengzhuankong,j_shigongjindu_float_zongbaopoliefeng,j_shigongjindu_float_muqianbaopoliefeng"

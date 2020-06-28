@@ -1,0 +1,202 @@
+{% extends 'adminlte/base.html' %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{#{% load crispy_forms_tags %}#}
+{% if title %}
+    {% block title %}
+        项目详情
+    {% endblock %}
+{% endif %}
+{% block js %}
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
+<script type="text/javascript" src="{% static "plugins/steps/lib.js" %}"></script>
+<!-- toastr js-->
+<script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
+<script type="text/javascript" src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script type="application/javascript">
+    $.ajax({
+        url: '{% url 'flowdataflap' ticket_id%}',
+        type: 'GET',
+        data: {'username':'{{request.user.username}}'},
+        success: function(data, textStatus, jqXHR) {
+            var ids = new Array();
+            console.log(data);
+            var showData = {
+                item_1:data.j_shigongjindu_float_muqianhengzumaosuo,
+                item_2:data.j_shigongjindu_float_muqianqiefengzhuankong,
+                item_3:data.j_shigongjindu_float_muqianbaopoliefeng,
+            };
+            var showData2 = {
+                findsh1:data.j_shigongjindu_float_muqianhengzumaosuo,
+                findsh2:data.j_shigongjindu_float_muqianqiefengzhuankong,
+                findsh3:data.j_shigongjindu_float_muqianbaopoliefeng,
+                unfindsh1: eval(data.j_shigongjindu_float_zonghengzumaosuo) - eval(data.j_shigongjindu_float_muqianhengzumaosuo),
+                unfindsh2: eval(data.j_shigongjindu_float_zongqiefengzhuankong) - eval(data.j_shigongjindu_float_muqianqiefengzhuankong),
+                unfindsh3: eval(data.j_shigongjindu_float_zongbaopoliefeng) - eval(data.j_shigongjindu_float_muqianbaopoliefeng),
+            };
+
+
+            addItem(showData);
+            add3(showData2);
+
+        },
+        error: function(data, textStatus, jqXHR) {
+            toastr['error'](data);
+        }
+    });
+
+    function addItem2(data) {
+        $("#bar_1").css("width",data.item_1+"%");
+        $("#bar_2").css("width",data.item_2+"%");
+        $("#bar_3").css("width",data.item_3+"%");
+    }
+    function addItem(data) {
+
+        var options = {
+          series: [{
+          data: [data.item_1,data.item_2,data.item_3]
+        }],
+          chart: {
+          type: 'bar',
+          height: 380
+        },
+        plotOptions: {
+          bar: {
+            barHeight: '100%',
+            distributed: true,
+            horizontal: true,
+            dataLabels: {
+              position: 'bottom'
+            },
+          }
+        },
+        colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e',
+          '#f48024', '#69d2e7'],
+        dataLabels: {
+          enabled: true,
+          textAnchor: 'start',
+          style: {
+            colors: ['#fff']
+          },
+          formatter: function (val, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val
+          },
+          offsetX: 0,
+          dropShadow: {
+            enabled: true
+          }
+        },
+        stroke: {
+          width: 1,
+          colors: ['#fff']
+        },
+        xaxis: {
+          categories: ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+        },
+        yaxis: {
+          labels: {
+            show: false
+          }
+        },
+        title: {
+            text: '项目进度一览',
+            align: 'center',
+            floating: true
+        },
+        subtitle: {
+            text: '',
+            align: 'center',
+        },
+        tooltip: {
+          theme: 'dark',
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function () {
+                return ''
+              }
+            }
+          }
+        }
+        };
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    }
+    function add3(data) {
+
+        var options = {
+          series: [{
+          name: '已完成量',
+          data: [data.findsh1, data.findsh2,data.findsh3]
+        }, {
+          name: '未成成量',
+          data: [data.unfindsh1, data.unfindsh2,data.unfindsh3]
+        }],
+          chart: {
+          type: 'bar',
+          height: 350,
+          stacked: true,
+          stackType: '100%'
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+        },
+        stroke: {
+          width: 1,
+          colors: ['#fff']
+        },
+        title: {
+          text: '项目进度一览'
+        },
+        xaxis: {
+          categories:  ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + "米"
+            }
+          }
+        },
+        fill: {
+          opacity: 1
+
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'left',
+          offsetX: 40
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart2"), options);
+        chart.render();
+
+    }
+</script>
+{% endblock %}
+{% block css %}
+
+<link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" >
+<style type="text/css">
+</style>
+{% endblock %}
+{% block content %}
+     <div class="row">
+        <a href="javascript:void(0)" class="skip-page"  onclick="history.back()" style="text-decoration:underline;">返回审核</a>
+        <div id="chart" style="width: 70%;margin-left: 100px;margin-top: 20px;">
+        </div>
+
+     <div id="chart2" style="width: 70%;margin-left: 100px;margin-top: 20px;">
+        </div>
+    </div>
+
+{% endblock %}
+
