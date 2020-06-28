@@ -1,0 +1,213 @@
+{% extends 'adminlte/base.html' %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{#{% load crispy_forms_tags %}#}
+{% if title %}
+    {% block title %}
+        项目详情
+    {% endblock %}
+{% endif %}
+{% block js %}
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
+<script type="text/javascript" src="{% static "plugins/steps/lib.js" %}"></script>
+<!-- toastr js-->
+<script src="{% static "plugins/toastr/toastr.min.js" %}"></script>
+<script type="text/javascript" src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'flatpickr/dist/flatpickr.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script type="application/javascript">
+    $.ajax({
+        url: '{% url 'flowdataflap' ticket_id%}',
+        type: 'GET',
+        data: {'username':'{{request.user.username}}'},
+        success: function(data, textStatus, jqXHR) {
+            var ids = new Array();
+            console.log(data);
+            var showData = {
+                item_1:data.j_shigongjindu_float_muqianhengzumaosuo,
+                item_2:data.j_shigongjindu_float_muqianqiefengzhuankong,
+                item_3:data.j_shigongjindu_float_muqianbaopoliefeng,
+            };
+            var showData2 = {
+                item_1:Math.round(eval(data.j_shigongjindu_float_muqianhengzumaosuo)/eval(data.j_shigongjindu_float_zonghengzumaosuo)*100),
+                item_2:Math.round(eval(data.j_shigongjindu_float_muqianqiefengzhuankong)/eval(data.j_shigongjindu_float_zongqiefengzhuankong)*100),
+                item_3:Math.round(eval(data.j_shigongjindu_float_muqianbaopoliefeng)/eval(data.j_shigongjindu_float_muqianbaopoliefeng)*100),
+            };
+            addItem(showData);
+            addItem2(showData2);
+            add3();
+
+        },
+        error: function(data, textStatus, jqXHR) {
+            toastr['error'](data);
+        }
+    });
+
+    function addItem2(data) {
+        $("#bar_1").css("width",data.item_1+"%");
+        $("#bar_2").css("width",data.item_2+"%");
+        $("#bar_3").css("width",data.item_3+"%");
+    }
+    function addItem(data) {
+
+        var options = {
+          series: [{
+          data: [data.item_1,data.item_2,data.item_3]
+        }],
+          chart: {
+          type: 'bar',
+          height: 380
+        },
+        plotOptions: {
+          bar: {
+            barHeight: '100%',
+            distributed: true,
+            horizontal: true,
+            dataLabels: {
+              position: 'bottom'
+            },
+          }
+        },
+        colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e',
+          '#f48024', '#69d2e7'],
+        dataLabels: {
+          enabled: true,
+          textAnchor: 'start',
+          style: {
+            colors: ['#fff']
+          },
+          formatter: function (val, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val
+          },
+          offsetX: 0,
+          dropShadow: {
+            enabled: true
+          }
+        },
+        stroke: {
+          width: 1,
+          colors: ['#fff']
+        },
+        xaxis: {
+          categories: ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+        },
+        yaxis: {
+          labels: {
+            show: false
+          }
+        },
+        title: {
+            text: '项目进度一览',
+            align: 'center',
+            floating: true
+        },
+        subtitle: {
+            text: '',
+            align: 'center',
+        },
+        tooltip: {
+          theme: 'dark',
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function () {
+                return ''
+              }
+            }
+          }
+        }
+        };
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    }
+    function add3() {
+
+        var options = {
+          series: [{
+          name: 'Marine Sprite',
+          data: [44, 55,11]
+        }, {
+          name: 'Striking Calf',
+          data: [53, 32,11]
+        }, {
+          name: 'Tank Picture',
+          data: [12, 17,22]
+        }],
+          chart: {
+          type: 'bar',
+          height: 350,
+          stacked: true,
+          stackType: '100%'
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+        },
+        stroke: {
+          width: 1,
+          colors: ['#fff']
+        },
+        title: {
+          text: '100% Stacked Bar'
+        },
+        xaxis: {
+          categories: [2008, 2009, 2010],
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + "K"
+            }
+          }
+        },
+        fill: {
+          opacity: 1
+
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'left',
+          offsetX: 40
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart2"), options);
+        chart.render();
+
+    }
+</script>
+{% endblock %}
+{% block css %}
+
+<link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" >
+<style type="text/css">
+</style>
+{% endblock %}
+{% block content %}
+     <div class="row">
+        <a href="javascript:void(0)" class="skip-page"  onclick="history.back()" style="text-decoration:underline;">返回审核</a>
+        <div id="chart" style="width: 70%;margin-left: 100px;margin-top: 20px;">
+        </div>
+
+        <div id="percent_chart" style="width: 60%;margin-left: 100px;margin-top: 40px;">
+            <div class="progress">
+            <div class="bar_1" id = "bar_1" style="width: 20%"></div>
+            </div>
+            <div class="progress">
+            <div class="bar_2" id = "bar_2"  style="width: 40%"></div>
+            </div>
+            <div class="progress">
+            <div class="bar_3" id = "bar_3"  style="width: 60%"></div>
+            </div>
+        </div>
+
+     <div id="chart2" style="width: 70%;margin-left: 100px;margin-top: 20px;">
+        </div>
+    </div>
+
+{% endblock %}
+

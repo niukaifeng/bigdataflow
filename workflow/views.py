@@ -17,6 +17,8 @@ import time
 from workflow.apirequest import WorkFlowAPiRequest
 from django.contrib.auth.models import User
 from workflow.util.Utils import Util
+from django.conf import settings
+from workflow.models import TempWork
 
 # Create your views here.
 # 登录后首页调用的函数，返回的是数据库中workflow_workflow表
@@ -177,8 +179,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
         state_result = state_result['data']['value']
         state_result2 = state_result2['data']['value']
 
-
-        out_list = list();
+        out_list = list()
 
         if isinstance(state_result, dict) and 'field_list' in state_result.keys():
             class DynamicForm(forms.Form):
@@ -193,6 +194,24 @@ class TicketDetail(LoginRequiredMixin, FormView):
                         *[Div(field['field_key'], css_class='form-table-group') for field in state_result['field_list']])
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
+            find_is_null = False
+            try:
+                temWork = TempWork.objects.get(ticket_id=ticket_id)
+
+                recode = eval(temWork.process_recod)
+
+                j_shigongjindu_float_zonghengzumaosuo = recode["j_shigongjindu_float_zonghengzumaosuo"]
+                j_shigongjindu_float_zongqiefengzhuankong = recode["j_shigongjindu_float_zongqiefengzhuankong"]
+                j_shigongjindu_float_zongbaopoliefeng = recode["j_shigongjindu_float_zongbaopoliefeng"]
+
+                j_shigongjindu_float_muqianhengzumaosuo = recode["j_shigongjindu_float_muqianhengzumaosuo"]
+                j_shigongjindu_float_muqianqiefengzhuankong= recode["j_shigongjindu_float_muqianqiefengzhuankong"]
+                j_shigongjindu_float_muqianbaopoliefeng = recode["j_shigongjindu_float_muqianbaopoliefeng"]
+
+                find_is_null = True
+            except TempWork.DoesNotExist:
+                pass
+
             for field in state_result['field_list']:
 
                 attributeFlag = field["field_attribute"]
@@ -201,6 +220,25 @@ class TicketDetail(LoginRequiredMixin, FormView):
                 if  attributeFlag != 1 :
                     if field['field_key']  == 'b_guanliyuanshenpi_char_xiangmubianhao':
                         field['field_attribute'] =  3
+
+                    if field['field_key']  == 'j_shigongjindu_float_zonghengzumaosuo':
+                        field['default_value'] = j_shigongjindu_float_zonghengzumaosuo
+
+                    if field['field_key'] == 'j_shigongjindu_float_zongqiefengzhuankong':
+                            field['default_value'] = j_shigongjindu_float_zongqiefengzhuankong
+
+                    if field['field_key'] == 'j_shigongjindu_float_zongbaopoliefeng':
+                        field['default_value'] = j_shigongjindu_float_zongbaopoliefeng
+
+                    if field['field_key'] == 'j_shigongjindu_float_muqianhengzumaosuo':
+                        field['default_value'] = j_shigongjindu_float_muqianhengzumaosuo
+
+                    if field['field_key']  == 'j_shigongjindu_float_muqianqiefengzhuankong':
+                        field['default_value'] = j_shigongjindu_float_muqianqiefengzhuankong
+
+                    if field['field_key']  == 'j_shigongjindu_float_muqianbaopoliefeng':
+                        field['default_value'] = j_shigongjindu_float_muqianbaopoliefeng
+
                     out_list.append(field)
                     Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
@@ -223,6 +261,16 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         state_result = self.kwargs.get('state_result', None)
         state_result2 = self.kwargs.get('state_result2', None)
+
+        for result in state_result2:
+
+            if settings.WORKTEMPSAVEBUTTONNAME == result['transition_name']:
+                context['show_stpe'] = True
+                context['temp_savebutton'] = settings.FLOWINPUTSTR
+                break
+
+
+
         workflow_name = ""
         if 'workflow_name' in self.request.GET.keys() :
             workflow_name = str(self.request.GET['workflow_name']).strip()
@@ -409,6 +457,73 @@ class TicketFlowlog(LoginRequiredMixin,View):
         status,state_result = ins.getdata(parameters={},method='get',url='/api/v1.0/tickets/{0}/flowlogs'.format(self.kwargs.get('ticket_id')))
         return JsonResponse(data=state_result)
 
+class SaveTempFlow(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        request_data = request.GET
+        ticket_id = kwargs.get('ticket_id')
+        username = request_data.get(
+            'username', request.user.username)  # 可用于权限控制
+
+        #总恒阻锚索/米
+        j_shigongjindu_float_zonghengzumaosuo =  request_data.get('j_shigongjindu_float_zonghengzumaosuo')
+
+        #总切缝钻孔/米
+        j_shigongjindu_float_zongqiefengzhuankong = request_data.get('j_shigongjindu_float_zongqiefengzhuankong')
+
+        # 总爆破裂缝/米
+        j_shigongjindu_float_zongbaopoliefeng = request_data.get('j_shigongjindu_float_zongbaopoliefeng')
+
+        #当前已完成恒阻锚索/米
+        j_shigongjindu_float_muqianhengzumaosuo = request_data.get('j_shigongjindu_float_muqianhengzumaosuo')
+
+        #当前已完成切缝钻孔/米
+        j_shigongjindu_float_muqianqiefengzhuankong =  request_data.get('j_shigongjindu_float_muqianqiefengzhuankong')
+
+        #当前已完成爆破裂缝/米
+        j_shigongjindu_float_muqianbaopoliefeng = request_data.get('j_shigongjindu_float_muqianbaopoliefeng')
+
+        state_result = dict()
+        insetData = dict()
+        temWork = TempWork()
+        find_is_null = False
+        try :
+            temWork = TempWork.objects.get(ticket_id = ticket_id)
+
+            recode =  eval(temWork.process_recod)
+
+
+            insetData['j_shigongjindu_float_muqianhengzumaosuo'] = str(int(recode["j_shigongjindu_float_muqianhengzumaosuo"]))
+            insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = str(int(recode["j_shigongjindu_float_muqianqiefengzhuankong"]))
+            insetData['j_shigongjindu_float_muqianbaopoliefeng'] = str(int(recode["j_shigongjindu_float_muqianbaopoliefeng"]))
+            # insetData['j_shigongjindu_float_muqianhengzumaosuo'] = str(
+            #     int(recode["j_shigongjindu_float_muqianhengzumaosuo"]) + int(j_shigongjindu_float_muqianhengzumaosuo))
+            # insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = str(
+            #     int(recode["j_shigongjindu_float_muqianqiefengzhuankong"]) + int(
+            #         j_shigongjindu_float_muqianqiefengzhuankong))
+            # insetData['j_shigongjindu_float_muqianbaopoliefeng'] = str(
+            #     int(recode["j_shigongjindu_float_muqianbaopoliefeng"]) + int(j_shigongjindu_float_muqianbaopoliefeng))
+
+            find_is_null = True
+        except TempWork.DoesNotExist:
+            pass
+
+        insetData['j_shigongjindu_float_zonghengzumaosuo'] = j_shigongjindu_float_zonghengzumaosuo
+        insetData['j_shigongjindu_float_zongqiefengzhuankong'] = j_shigongjindu_float_zongqiefengzhuankong
+        insetData['j_shigongjindu_float_zongbaopoliefeng'] = j_shigongjindu_float_zongbaopoliefeng
+
+        if not find_is_null:
+            insetData['j_shigongjindu_float_muqianhengzumaosuo'] = j_shigongjindu_float_muqianhengzumaosuo
+            insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = j_shigongjindu_float_muqianqiefengzhuankong
+            insetData['j_shigongjindu_float_muqianbaopoliefeng'] = j_shigongjindu_float_muqianbaopoliefeng
+
+        temWork.ticket_id = ticket_id
+        temWork.process_recod =str (insetData)
+        temWork.save()
+
+        return JsonResponse(data=state_result)
+
+
 class TicketFlowBack(LoginRequiredMixin,View):
 
     def get(self, request, *args, **kwargs):
@@ -419,7 +534,7 @@ class TicketFlowBack(LoginRequiredMixin,View):
         suggestion = request_data.get('suggestion')
         transitionid = request_data.get('transitionid')
         #
-        form_data = dict();
+        form_data = dict()
         form_data['suggestion'] = suggestion
         form_data['transition_id'] = int(transitionid)
         ins = WorkFlowAPiRequest(username=self.request.user.username)
@@ -448,6 +563,43 @@ class downloadFile(LoginRequiredMixin, View):
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="'+path.split("/")[len(path.split("/"))-1]+'"'
         return response
+
+
+
+#查找历史保存数据    by gu
+class FlowDataFlap(LoginRequiredMixin,View):
+    """
+    工单流转记录
+    """
+    def get(self, request, *args, **kwargs):
+        request_data = request.GET
+        ticket_id = kwargs.get('ticket_id')
+
+        datadic = dict
+        try :
+            datadic = eval(TempWork.objects.get(ticket_id=ticket_id).process_recod)
+        except:
+            pass
+
+        return JsonResponse(data=datadic)
+
+
+##数据库查询数据，没有数据什么都不显示
+class TickeFlowDetail(LoginRequiredMixin, FormView):
+    template_name = 'workflow/tickeflowdetail.html'
+    success_url = "/"
+    def get_form_class(self):
+        form_fields = dict()
+
+        class DynamicForm(forms.Form):
+            def __init__(self, *args, **kwargs):
+                self.helper = FormHelper()
+                super(DynamicForm, self).__init__(*args, **kwargs)
+        return type('DynamicItemsForm', (DynamicForm,), form_fields)
+    def get_context_data(self, **kwargs):
+        context = super(TickeFlowDetail, self).get_context_data(**kwargs)
+        context['ticket_id'] = self.kwargs.get('ticket_id')
+        return context
 
 
 
