@@ -195,6 +195,12 @@ class TicketDetail(LoginRequiredMixin, FormView):
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
             find_is_null = False
+            j_shigongjindu_float_zonghengzumaosuo  = ""
+            j_shigongjindu_float_zongqiefengzhuankong = ""
+            j_shigongjindu_float_zongbaopoliefeng = ""
+            j_shigongjindu_float_muqianhengzumaosuo = ""
+            j_shigongjindu_float_muqianqiefengzhuankong = ""
+            j_shigongjindu_float_muqianbaopoliefeng = ""
             try:
                 temWork = TempWork.objects.get(ticket_id=ticket_id)
 
