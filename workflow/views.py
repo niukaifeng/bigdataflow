@@ -487,7 +487,7 @@ class SaveTempFlow(LoginRequiredMixin, View):
         j_shigongjindu_float_muqianbaopoliefeng = request_data.get('j_shigongjindu_float_muqianbaopoliefeng')
 
         state_result = dict()
-        insetData = dict()
+        insertData = dict()
         temWork = TempWork()
         find_is_null = False
         try :
@@ -496,32 +496,32 @@ class SaveTempFlow(LoginRequiredMixin, View):
             recode =  eval(temWork.process_recod)
 
 
-            insetData['j_shigongjindu_float_muqianhengzumaosuo'] = j_shigongjindu_float_muqianhengzumaosuo
-            insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = j_shigongjindu_float_muqianqiefengzhuankong
-            insetData['j_shigongjindu_float_muqianbaopoliefeng'] =j_shigongjindu_float_muqianbaopoliefeng
-            # insetData['j_shigongjindu_float_muqianhengzumaosuo'] = str(
+            insertData['j_shigongjindu_float_muqianhengzumaosuo'] = j_shigongjindu_float_muqianhengzumaosuo
+            insertData['j_shigongjindu_float_muqianqiefengzhuankong'] = j_shigongjindu_float_muqianqiefengzhuankong
+            insertData['j_shigongjindu_float_muqianbaopoliefeng'] =j_shigongjindu_float_muqianbaopoliefeng
+            # insertData['j_shigongjindu_float_muqianhengzumaosuo'] = str(
             #     int(recode["j_shigongjindu_float_muqianhengzumaosuo"]) + int(j_shigongjindu_float_muqianhengzumaosuo))
-            # insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = str(
+            # insertData['j_shigongjindu_float_muqianqiefengzhuankong'] = str(
             #     int(recode["j_shigongjindu_float_muqianqiefengzhuankong"]) + int(
             #         j_shigongjindu_float_muqianqiefengzhuankong))
-            # insetData['j_shigongjindu_float_muqianbaopoliefeng'] = str(
+            # insertData['j_shigongjindu_float_muqianbaopoliefeng'] = str(
             #     int(recode["j_shigongjindu_float_muqianbaopoliefeng"]) + int(j_shigongjindu_float_muqianbaopoliefeng))
 
             find_is_null = True
         except TempWork.DoesNotExist:
             pass
 
-        insetData['j_shigongjindu_float_zonghengzumaosuo'] = j_shigongjindu_float_zonghengzumaosuo
-        insetData['j_shigongjindu_float_zongqiefengzhuankong'] = j_shigongjindu_float_zongqiefengzhuankong
-        insetData['j_shigongjindu_float_zongbaopoliefeng'] = j_shigongjindu_float_zongbaopoliefeng
+        insertData['j_shigongjindu_float_zonghengzumaosuo'] = j_shigongjindu_float_zonghengzumaosuo
+        insertData['j_shigongjindu_float_zongqiefengzhuankong'] = j_shigongjindu_float_zongqiefengzhuankong
+        insertData['j_shigongjindu_float_zongbaopoliefeng'] = j_shigongjindu_float_zongbaopoliefeng
 
         if not find_is_null:
-            insetData['j_shigongjindu_float_muqianhengzumaosuo'] = j_shigongjindu_float_muqianhengzumaosuo
-            insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = j_shigongjindu_float_muqianqiefengzhuankong
-            insetData['j_shigongjindu_float_muqianbaopoliefeng'] = j_shigongjindu_float_muqianbaopoliefeng
+            insertData['j_shigongjindu_float_muqianhengzumaosuo'] = j_shigongjindu_float_muqianhengzumaosuo
+            insertData['j_shigongjindu_float_muqianqiefengzhuankong'] = j_shigongjindu_float_muqianqiefengzhuankong
+            insertData['j_shigongjindu_float_muqianbaopoliefeng'] = j_shigongjindu_float_muqianbaopoliefeng
 
         temWork.ticket_id = ticket_id
-        temWork.process_recod =str (insetData)
+        temWork.process_recod =str (insertData)
         temWork.save()
 
         return JsonResponse(data=state_result)
