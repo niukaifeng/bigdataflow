@@ -499,9 +499,9 @@ class SaveTempFlow(LoginRequiredMixin, View):
             recode =  eval(temWork.process_recod)
 
 
-            insetData['j_shigongjindu_float_muqianhengzumaosuo'] = str(int(recode["j_shigongjindu_float_muqianhengzumaosuo"]))
-            insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = str(int(recode["j_shigongjindu_float_muqianqiefengzhuankong"]))
-            insetData['j_shigongjindu_float_muqianbaopoliefeng'] = str(int(recode["j_shigongjindu_float_muqianbaopoliefeng"]))
+            insetData['j_shigongjindu_float_muqianhengzumaosuo'] = j_shigongjindu_float_muqianhengzumaosuo
+            insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = j_shigongjindu_float_muqianqiefengzhuankong
+            insetData['j_shigongjindu_float_muqianbaopoliefeng'] =j_shigongjindu_float_muqianbaopoliefeng
             # insetData['j_shigongjindu_float_muqianhengzumaosuo'] = str(
             #     int(recode["j_shigongjindu_float_muqianhengzumaosuo"]) + int(j_shigongjindu_float_muqianhengzumaosuo))
             # insetData['j_shigongjindu_float_muqianqiefengzhuankong'] = str(
