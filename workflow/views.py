@@ -69,6 +69,8 @@ class TicketCreate(LoginRequiredMixin, FormView):
                     super(DynamicForm, self).__init__(*args, **kwargs)
 
             for field in state_result['field_list']:
+                if field['field_key'] == 'title':
+                    field['field_name'] = "项目名称"
                 Util.createWebDirex(field,forms,form_fields,User)
                 # handle read only field
                 if field['field_attribute'] == 1:
