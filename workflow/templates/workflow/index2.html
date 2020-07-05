@@ -1,0 +1,42 @@
+{#该页面为用户登录后的显示页面，#}
+{#该页面继承adminlte/base.html里的页面格式和页面内容。#}
+{% extends 'adminlte/base.html' %}
+{% load staticfiles %}
+{% if title %}
+    {% block title %}
+        新建项目
+    {% endblock %}
+{% endif %}
+{% block js %}
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
+<script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script type="text/javascript">
+
+</script>
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'datatables/media/css/dataTables.bootstrap.min.css' %}">
+
+{% endblock %}
+
+{% block head_ext %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        {{app_label}}
+        <small>控制台</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li class="active">{{model}}</li>
+    </ol>
+</section>
+{{extra_content}}{% endblock %}
+
+{% block content %}
+<div class="row">
+
+</div>
+
+{% endblock %}

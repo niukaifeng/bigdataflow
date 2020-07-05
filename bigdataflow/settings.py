@@ -41,7 +41,13 @@ INSTALLED_APPS = [
     'crispy_forms',
     'adminlte',
     'workflow',
+    # 'guardian',
 ]
+
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend', # django默认的backend
+#     'guardian.backends.ObjectPermissionBackend',
+# )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -172,3 +178,9 @@ WORKFLOWAPPNAME = "110"
 
 WORKTEMPSAVEBUTTONNAME = "提交施工进度数据"
 FLOWINPUTSTR = "j_shigongjindu_float_zonghengzumaosuo,j_shigongjindu_float_muqianhengzumaosuo,j_shigongjindu_float_zongqiefengzhuankong,j_shigongjindu_float_muqianqiefengzhuankong,j_shigongjindu_float_zongbaopoliefeng,j_shigongjindu_float_muqianbaopoliefeng"
+
+NEWPRO = "auth.newpro"
+MYPRO = "auth.mypro"
+MYTODO = "auth.mytodo"
+MYRELA = "auth.myrela"
+ALL = "auth.all"
