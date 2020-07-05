@@ -127,6 +127,10 @@ class TicketCreate(LoginRequiredMixin, FormView):
             context['buttons'] = state_result['transition']
         #print(3)
         #print(context)
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
         return context
 
     def form_valid(self, form):
@@ -336,6 +340,11 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         #按钮显示
         context['buttons'] = state_result2
+
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
 
         return context
 
@@ -655,6 +664,10 @@ class TickeFlowDetail(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(TickeFlowDetail, self).get_context_data(**kwargs)
         context['ticket_id'] = self.kwargs.get('ticket_id')
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
         return context
 
 
@@ -769,6 +782,11 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
 
         # title 文件存储的路径
         context['title'] = self.kwargs.get('title')
+
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
 
         return context
 
