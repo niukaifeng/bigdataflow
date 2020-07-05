@@ -1,6 +1,8 @@
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 import os
 
+from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Util (object):
@@ -146,3 +148,19 @@ class Util (object):
             print('保存成功')
         except Exception as e:
             print('保存失败', e)
+
+    @classmethod
+    def judgePremission(self,user_name,context):
+        permissionlist = list(User.objects.get(username=user_name).get_all_permissions())
+
+        if settings.NEWPRO in permissionlist:
+            context['showMenu1'] = True
+        if settings.MYPRO in permissionlist:
+            context['showMenu2'] = True
+        if settings.MYTODO in permissionlist:
+            context['showMenu3'] = True
+        if settings.MYRELA in permissionlist:
+            context['showMenu4'] = True
+        if settings.ALL in permissionlist:
+            context['showMenu5'] = True
+

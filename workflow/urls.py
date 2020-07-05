@@ -1,10 +1,11 @@
 from django.conf.urls import url, include,re_path
 
-from workflow.views import Index,TicketCreate,MyTicket,TicketDetail,SaveTempFlow,FlowDataFlap,MyToDoTicket,MyRelatedTicket,TickeFlowDetail,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
+from workflow.views import Index,NewPro,TicketCreate,MyTicket,TicketDetail,SaveTempFlow,FlowDataFlap,MyToDoTicket,MyRelatedTicket,TickeFlowDetail,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
 
 
 urlpatterns = [
     re_path(r'^$', Index.as_view(), name='workflow-index'),
+    re_path(r'^newpro/$', NewPro.as_view(), name='workflow-newpro'),
     re_path(r'^my/$', MyTicket.as_view(), name='ticket-my'),
     re_path(r'^mytodo/$', MyToDoTicket.as_view(), name='ticket-my-todo'),
     re_path(r'^myrelated/$', MyRelatedTicket.as_view(), name='ticket-my-related'),

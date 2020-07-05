@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, View, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+
 try:
     import simplejson as json
 except ImportError:
@@ -19,22 +22,48 @@ from django.contrib.auth.models import User
 from workflow.util.Utils import Util
 from django.conf import settings
 from workflow.models import TempWork
+from django.contrib.auth import authenticate
 
 # Create your views here.
 # 登录后首页调用的函数，返回的是数据库中workflow_workflow表
 class Index(LoginRequiredMixin, TemplateView):
-    template_name = 'workflow/index.html'
+    template_name = 'workflow/index2.html'
+
 
     def get_context_data(self, **kwargs):
         context = super(Index, self).get_context_data(**kwargs)
+        user_name = self.request.user.username
         #context['workflows'] = Workflow.objects.all()
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        ins = WorkFlowAPiRequest(username=user_name)
         status,data = ins.getdata(dict(per_page=20, name=''),method='get',url='/api/v1.0/workflows')
         #print(data['value'])
         if status:
             context['workflows'] = data['data']['value']
-        #print(context['workflows'])
+
+        Util.judgePremission(user_name,context)
+
+
         return context
+
+class NewPro(LoginRequiredMixin, TemplateView):
+    template_name = 'workflow/index.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(NewPro, self).get_context_data(**kwargs)
+        user_name = self.request.user.username
+        #context['workflows'] = Workflow.objects.all()
+        ins = WorkFlowAPiRequest(username=user_name)
+        status,data = ins.getdata(dict(per_page=20, name=''),method='get',url='/api/v1.0/workflows')
+        #print(data['value'])
+        if status:
+            context['workflows'] = data['data']['value']
+
+        Util.judgePremission(user_name,context)
+
+
+        return context
+
 
 # 用于选择工作流，创建工单的函数  by kf
 class TicketCreate(LoginRequiredMixin, FormView):
@@ -158,6 +187,10 @@ class MyTicket(LoginRequiredMixin, TemplateView):
                 context['ticket_result_restful_list'] = state_result['data']['value']
         context['msg'] = state_result['msg']
         #print(context)
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except :
+            pass
         return context
 
 # 在我创建的页面中点击“详情”，显示工单的详情页面  by kf
@@ -248,7 +281,11 @@ class TicketDetail(LoginRequiredMixin, FormView):
                     if field['field_key']  == 'j_shigongjindu_float_muqianbaopoliefeng':
                         field['default_value'] = j_shigongjindu_float_muqianbaopoliefeng
 
+
+
                     out_list.append(field)
+
+
                     Util.createWebDirex(field, forms, form_fields, User)
                 # handle read only field
                 # if field['field_attribute'] == 1:
@@ -365,6 +402,10 @@ class MyToDoTicket(LoginRequiredMixin, TemplateView):
                 context['ticket_result_restful_list'] = state_result['data']['value']
         context['msg'] = state_result['msg']
         #print(context)
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
         return context
 
 #左侧菜单栏中“我相关的”页面处理函数  by kf
@@ -391,6 +432,11 @@ class MyRelatedTicket(LoginRequiredMixin, TemplateView):
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
                 context['ticket_result_restful_list'] = state_result['data']['value']
         context['msg'] = state_result['msg']
+
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
         return context
 
 #左侧菜单栏中“所有工单”页面处理函数  by kf
@@ -420,6 +466,10 @@ class AllTicket(LoginRequiredMixin, TemplateView):
                 context['ticket_result_restful_list'] = state_result['data']['value']
         context['msg'] = state_result['msg']
         #print(context)
+        try:
+            Util.judgePremission(self.request.user.username, context)
+        except:
+            pass
         return context
 
 #工单流转step: 用于显示工单当前状态的step图  by kf
