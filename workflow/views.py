@@ -439,7 +439,13 @@ class MyRelatedTicket(LoginRequiredMixin, TemplateView):
         status,state_result = ins.getdata(parameters=dict(category='relation'),method='get',url='/api/v1.0/tickets')
         if status:
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
-                context['ticket_result_restful_list'] = state_result['data']['value']
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    if item['state']['state_name'] == '施工进度':
+                        item['showFlowChatFlag'] = True
+                    else:
+                        item['showFlowChatFlag'] = False
+                context['ticket_result_restful_list'] = resultList
         context['msg'] = state_result['msg']
 
         try:
