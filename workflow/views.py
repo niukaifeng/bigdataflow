@@ -108,7 +108,7 @@ class TicketCreate(LoginRequiredMixin, FormView):
                     ].widget.attrs['disabled'] = 'disabled'
         else:
             raise Http404()
-        print(form_fields)
+            # print(form_fields)
 
         return type('DynamicItemsForm', (DynamicForm,), form_fields)
 
