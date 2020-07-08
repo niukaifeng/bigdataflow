@@ -335,6 +335,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
         #为了组建显示
         context['state_result'] = state_result
         context['workflow_name'] = workflow_name
+        self.request.session["workflow_name"] = workflow_name
         context['flow_code'] = flow_code
         #查找日志
         context['ticket_id'] = self.kwargs.get('ticket_id')
@@ -732,6 +733,8 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                 if field['field_key'] == 'title':
                     field['field_name'] = "项目名称"
                     field['description'] = None
+                if field['field_key'] == 'b_guanliyuanshenpi_char_xiangmubianhao':
+                    field['field_value'] = self.request.session["workflow_name"] + state_result["sn"]
                 attributeFlag = field["field_attribute"]
                 # 将控件的值提读出来
                 field["default_value"] = field["field_value"]
