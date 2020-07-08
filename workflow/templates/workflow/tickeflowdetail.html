@@ -138,7 +138,7 @@
           type: 'bar',
           height: 350,
           stacked: true,
-          {#stackType: '100%'#}
+          stackType: '100%'
         },
         plotOptions: {
           bar: {
@@ -157,6 +157,11 @@
         },
         xaxis: {
           categories:  ['恒阻锚索','切缝钻孔', '爆破裂缝'],
+          labels: {
+              formatter: function (val) {
+              return val + "%"
+            }
+          }
         },
         tooltip: {
           y: {
