@@ -58,7 +58,7 @@
         }],
           chart: {
           type: 'bar',
-          height: 380
+          height: 300
         },
         plotOptions: {
           bar: {
@@ -91,7 +91,7 @@
           colors: ['#fff']
         },
         xaxis: {
-          categories: ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+          categories: ['恒阻锚索','切缝钻孔', '爆破裂缝'],
         },
         yaxis: {
           labels: {
@@ -99,7 +99,7 @@
           }
         },
         title: {
-            text: '施工进度',
+            text: '施工进度已完成量',
             align: 'center',
             floating: true
         },
@@ -156,7 +156,12 @@
           align: 'center',
         },
         xaxis: {
-          categories:  ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+          categories:  ['恒阻锚索','切缝钻孔', '爆破裂缝'],
+          labels: {
+              formatter: function (val) {
+              return val + "%"
+            }
+          }
         },
         tooltip: {
           y: {
@@ -211,7 +216,7 @@
 
 {% block content %}
      <div class="row">
-        <a href="javascript:void(0)" class="skip-page"  onclick="history.back()" style="text-decoration:underline;">返回审核</a>
+        <a href="javascript:void(0)" class="skip-page"  onclick="history.back()" style="text-decoration:underline;">返回</a>
         <div id="chart" style="width: 80%;margin-left: 100px;margin-top: 20px;">
         </div>
 

@@ -188,7 +188,13 @@ class MyTicket(LoginRequiredMixin, TemplateView):
         status,state_result = ins.getdata(parameters=dict(category='owner'),method='get',url='/api/v1.0/tickets')
         if status:
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
-                context['ticket_result_restful_list'] = state_result['data']['value']
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    if item['state']['state_name'] == '施工进度':
+                        item['showFlowChatFlag'] = True
+                    else:
+                        item['showFlowChatFlag'] = False
+                context['ticket_result_restful_list'] = resultList
         context['msg'] = state_result['msg']
         #print(context)
         try:
@@ -478,7 +484,13 @@ class AllTicket(LoginRequiredMixin, TemplateView):
         status,state_result = ins.getdata(parameters=dict(category='all'),method='get',url='/api/v1.0/tickets')
         if status:
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
-                context['ticket_result_restful_list'] = state_result['data']['value']
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    if item['state']['state_name'] == '施工进度':
+                        item['showFlowChatFlag'] = True
+                    else:
+                        item['showFlowChatFlag'] = False
+                context['ticket_result_restful_list'] = resultList
         context['msg'] = state_result['msg']
         #print(context)
         try:
@@ -628,11 +640,13 @@ class GetUserName(LoginRequiredMixin,View):
 class downloadFile(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         path = request.GET.get('path')
+        filename = path.split("/")[len(path.split("/"))-1]
 
         file = open(path,'rb')
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="'+path.split("/")[len(path.split("/"))-1]+'"'
+        #下载带有中文的文件，需要对编码进行修改
+        response['Content-Disposition'] = 'attachment;filename="'+ filename.encode('utf-8').decode('ISO-8859-1')
         return response
 
 
