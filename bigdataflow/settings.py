@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'adminlte',
     'workflow',
     # 'guardian',
+    # 'users.apps.UsersConfig',
 ]
 
 # AUTHENTICATION_BACKENDS = (
@@ -184,3 +185,6 @@ MYPRO = "auth.mypro"
 MYTODO = "auth.mytodo"
 MYRELA = "auth.myrela"
 ALL = "auth.all"
+
+#用户信息添加手机号码字段
+# AUTH_USER_MODEL= 'workflow.User'

@@ -58,7 +58,7 @@
         }],
           chart: {
           type: 'bar',
-          height: 380
+          height: 300
         },
         plotOptions: {
           bar: {
@@ -91,7 +91,7 @@
           colors: ['#fff']
         },
         xaxis: {
-          categories: ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+          categories: ['恒阻锚索','切缝钻孔', '爆破裂缝'],
         },
         yaxis: {
           labels: {
@@ -99,7 +99,7 @@
           }
         },
         title: {
-            text: '施工进度',
+            text: '施工进度已完成量',
             align: 'center',
             floating: true
         },
@@ -138,7 +138,7 @@
           type: 'bar',
           height: 350,
           stacked: true,
-          stackType: '100%'
+          {#stackType: '100%'#}
         },
         plotOptions: {
           bar: {
@@ -156,7 +156,7 @@
           align: 'center',
         },
         xaxis: {
-          categories:  ['恒阻锚索','切缝钻孔', '切缝钻孔'],
+          categories:  ['恒阻锚索','切缝钻孔', '爆破裂缝'],
         },
         tooltip: {
           y: {

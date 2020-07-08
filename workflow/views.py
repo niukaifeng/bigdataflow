@@ -640,11 +640,13 @@ class GetUserName(LoginRequiredMixin,View):
 class downloadFile(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         path = request.GET.get('path')
+        filename = path.split("/")[len(path.split("/"))-1]
 
         file = open(path,'rb')
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="'+path.split("/")[len(path.split("/"))-1]+'"'
+        #下载带有中文的文件，需要对编码进行修改
+        response['Content-Disposition'] = 'attachment;filename="'+ filename.encode('utf-8').decode('ISO-8859-1')
         return response
 
 
