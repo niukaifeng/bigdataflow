@@ -33,7 +33,7 @@
 23. 上一步工单详情，弄成按照流程的报表形式（目前是后台添加控件，流程报表形式的话需要改loonflow接口）（师弟修改控件顺序）
 
 ## 固定且不能改变的字段
-b_guanliyuanshenpi_char_xiangmubianhao
+b_guanliyuanshenpi_char_xiangmuliushuihao
 
 g_sanfanghuiqian_text_sanfanghuiqian
 

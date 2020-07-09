@@ -268,9 +268,9 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
                 attributeFlag = field["field_attribute"]
                 # 1只读，2必填，3选填
-                #创建时候，只有是必须填写或者选填的才进行渲染  'field_key' (140598713991728) 'b_guanliyuanshenpi_char_xiangmubianhao'
+                #创建时候，只有是必须填写或者选填的才进行渲染  'field_key' (140598713991728) 'b_guanliyuanshenpi_char_xiangmuliushuihao'
                 if  attributeFlag != 1 :
-                    if field['field_key']  == 'b_guanliyuanshenpi_char_xiangmubianhao':
+                    if field['field_key']  == 'b_guanliyuanshenpi_char_xiangmuliushuihao':
                         field['field_attribute'] =  3
 
                     if field['field_key']  == 'j_shigongjindu_float_zonghengzumaosuo':
@@ -733,7 +733,7 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
                 if field['field_key'] == 'title':
                     field['field_name'] = "项目名称"
                     field['description'] = None
-                if field['field_key'] == 'b_guanliyuanshenpi_char_xiangmubianhao':
+                if field['field_key'] == 'b_guanliyuanshenpi_char_xiangmuliushuihao':
                     field['field_value'] = self.request.session["workflow_name"] + state_result["sn"]
                 attributeFlag = field["field_attribute"]
                 # 将控件的值提读出来
