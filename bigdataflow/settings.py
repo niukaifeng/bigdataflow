@@ -190,7 +190,8 @@ ALL = "auth.all"
 # AUTH_USER_MODEL= 'workflow.User'
 
 EMAIL_HOST = 'smtp.qq.com'
-EMAIL_FROM = '294403373@qq.com'
-EMAIL_HOST_PASSWORD = 'jqcvtybuplhcbjba'
-EMAIL_FROM = '294403373@qq.com'
+EMAIL_FROM = '923683429@qq.com'
+EMAIL_HOST_PASSWORD = 'kuectoixnwvdbcbf'
 EMAIL_PORT = 465
+
+EMAIL_FROM_TITLE = "大数据工法管理系统<http://127.0.0.1:8080/>"
