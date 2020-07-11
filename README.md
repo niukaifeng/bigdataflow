@@ -59,4 +59,6 @@ FLOWINPUTSTR
 [] 单独显示进度条
 [] 数据柏村    
 
+安装
+python -m pip install djangorestframework
 

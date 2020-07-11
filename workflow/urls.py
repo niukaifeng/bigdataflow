@@ -1,6 +1,6 @@
 from django.conf.urls import url, include,re_path
 
-from workflow.views import Index,NewPro,TicketCreate,MyTicket,TicketDetail,SaveTempFlow,FlowDataFlap,MyToDoTicket,MyRelatedTicket,TickeFlowDetail,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
+from workflow.views import Mail,Index,NewPro,TicketCreate,MyTicket,TicketDetail,SaveTempFlow,FlowDataFlap,MyToDoTicket,MyRelatedTicket,TickeFlowDetail,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
 
 
 urlpatterns = [
@@ -52,4 +52,11 @@ urlpatterns = [
     #提交施工进度数据
     re_path(r'(?P<ticket_id>[0-9]+)/saveTempflow',
         SaveTempFlow.as_view(), name='saveTempflow'),
+
+
+
+    ###hock
+    re_path(r'emailchange',
+            Mail.as_view(), name='emailchange'),
+
 ]
