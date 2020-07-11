@@ -1,8 +1,9 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 try:
     import simplejson as json
@@ -812,5 +813,57 @@ class TicketBeforeFlowStep(LoginRequiredMixin, FormView):
             pass
 
         return context
+
+
+class Mail(APIView):
+
+    def post(self,request):
+
+        # 通知标题，在工作流配置中会配置标题模板，此处将根据工单的信息生成实际的标题
+        title_result = request.GET.get("title_result")
+
+        # 通知内容，在工作流配置中会配置内容模板，此处将根据工单的信息生成实际的内容
+        content_result = request.GET.get("content_result")
+
+        # 当前参与人类型, 类型定义见文档中"常量说明", hook服务方需根据类型决定是否发送消息
+        participant_type_id = request.GET.get("participant_type_id")
+
+        # 该字段中将包含工单所有字段的值，一般情况下发送消息时候根据标题和内容发送即可，
+        ticket_value_info = request.GET.get("ticket_value_info")
+
+        # 工单的最近一条处理记录，发送通知消息时可以根据自己需要决定消息中是否包含这个信息
+        last_flow_log = request.GET.get("last_flow_log")
+
+        # 工单的当前处理人信息列表， 是一个数组，每个记录中都包含处理人的username, alias, email, phone
+        participant_info_list = request.GET.get("participant_info_list")
+
+        myuserme = request.GET.get("username")
+        findUser = User.objects.get(username=myuserme)
+
+        Util.send_register_active_email(findUser.email, findUser.username, "内容测试")
+
+        # for item in participant_info_list:
+        #     try:
+        #         findUser = User.objects.all(username=item["username"])
+        #         # 发送激活邮件，包含一个激活的链接在（get请求）
+        #         Util.send_register_active_email(findUser.email, findUser.username, "内容测试")
+        #     except:
+        #         pass
+
+        return Response({
+            'status': 0,
+            'msg': 'ok',
+            'results': {
+                'name': '百年孤独',
+                'price': 33.60
+            }
+        })
+
+        #Util.gen_signature_by_token(token)
+
+
+
+
+
 
 

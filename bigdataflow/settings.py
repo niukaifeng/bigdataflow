@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = '&b%ab=q)!8d7p-!$v^*4+wf*m%c+nu@%o9j_=dg=u5i5krf7uh'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,6 +39,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'adminlte',
     'workflow',
+    'rest_framework',
     # 'guardian',
     # 'users.apps.UsersConfig',
 ]
@@ -49,6 +48,12 @@ INSTALLED_APPS = [
 #     'django.contrib.auth.backends.ModelBackend', # django默认的backend
 #     'guardian.backends.ObjectPermissionBackend',
 # )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -80,14 +85,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bigdataflow.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 # 使用mysql数据库
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'bigdataflow',  # Or path to database file if using sqlite3.
         'USER': 'root',  # Not used with sqlite3.
@@ -96,7 +100,6 @@ DATABASES = {
         'PORT': '3306',  # Set to empty string for default. Not used with sqlite3.
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -116,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -129,7 +131,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -144,7 +145,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 if not os.path.exists(MEDIA_ROOT):
     os.mkdir(MEDIA_ROOT, mode=511)
 
-#crispy在setting中的配置  by kf
+# crispy在setting中的配置  by kf
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 #
 # 使用django ckeditor库文件，CHEDITOR_UPLOAD_PATH的作用是设定你通过ckeditor所上传的文件的存放目录  by kf
@@ -164,7 +165,6 @@ THUMBNAIL_SIZE = (300, 300)
 
 CSRF_COOKIE_NAME = 'bigdataflow'
 SESSION_COOKIE_NAME = 'bigdataflowsession'
-
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -186,5 +186,11 @@ MYTODO = "auth.mytodo"
 MYRELA = "auth.myrela"
 ALL = "auth.all"
 
-#用户信息添加手机号码字段
+# 用户信息添加手机号码字段
 # AUTH_USER_MODEL= 'workflow.User'
+
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_FROM = '294403373@qq.com'
+EMAIL_HOST_PASSWORD = 'jqcvtybuplhcbjba'
+EMAIL_FROM = '294403373@qq.com'
+EMAIL_PORT = 465

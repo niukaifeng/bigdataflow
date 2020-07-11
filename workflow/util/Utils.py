@@ -1,5 +1,10 @@
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
+import hashlib
+import smtplib
+import time
+
 import os
+from email.mime.text import MIMEText
+from email.header import Header
 
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -163,4 +168,44 @@ class Util (object):
             context['showMenu4'] = True
         if settings.ALL in permissionlist:
             context['showMenu5'] = True
+
+    @classmethod
+    def gen_signature_by_token(cls, token: str) -> tuple:
+        md5_key = token
+        timestamp = str(int(time.time()))
+        ori_str = timestamp + md5_key
+        tar_str = hashlib.md5(ori_str.encode(encoding='utf-8')).hexdigest()
+        return True, dict(signature=tar_str, timestamp=timestamp)
+
+
+    @classmethod
+
+    def send_register_active_email(cls,to_main_user_mail, username, token):
+
+        msg11 = "ddd{}".format("111")
+
+        mail_host = settings.EMAIL_HOST  # 设置服务器
+        mail_user = settings.EMAIL_FROM  # 用户名
+        mail_pass = settings.EMAIL_HOST_PASSWORD  # "dkhafgqsflsjbhhg" 口令,QQ邮箱是输入授权码，在qq邮箱设置 里用验证过的手机发送短信获得，不含空格
+
+        sender = settings.EMAIL_FROM
+        receivers = [to_main_user_mail]  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+
+        # 设置格式
+        message = MIMEText(msg11, 'html', 'utf-8')
+        message['From'] = "大数据流管理系统<http://127.0.0.1:8000/user/index>"
+        message['To'] = to_main_user_mail
+
+        subject = '大数据流:用户激活'
+        message['Subject'] = Header(subject, 'utf-8')
+
+        try:
+            smtpObj = smtplib.SMTP_SSL(mail_host, settings.EMAIL_PORT)
+            smtpObj.login(mail_user, mail_pass)
+            smtpObj.sendmail(sender, receivers, message.as_string())
+            smtpObj.quit()
+            print(u"邮件发送成功")
+        except smtplib.SMTPException as e:
+            print(e)
+            pass
 
