@@ -180,10 +180,11 @@ class Util (object):
 
     @classmethod
 
-    def send_register_active_email(cls,to_main_user_mail, username, token):
+    def send_register_active_email(cls,to_main_user_mail, subjects, content):
 
-        msg11 = "ddd{}".format("111")
+        msg11 = "尊敬的用户，您有新的待办<br>请尽快处理。"
 
+        # msg11 = content
         mail_host = settings.EMAIL_HOST  # 设置服务器
         mail_user = settings.EMAIL_FROM  # 用户名
         mail_pass = settings.EMAIL_HOST_PASSWORD  # "dkhafgqsflsjbhhg" 口令,QQ邮箱是输入授权码，在qq邮箱设置 里用验证过的手机发送短信获得，不含空格
@@ -193,10 +194,12 @@ class Util (object):
 
         # 设置格式
         message = MIMEText(msg11, 'html', 'utf-8')
-        message['From'] = "大数据流管理系统<http://127.0.0.1:8000/user/index>"
+        message['From'] = settings.EMAIL_FROM_TITLE
         message['To'] = to_main_user_mail
 
-        subject = '大数据流:用户激活'
+        #主题
+        subject = '项目待办提醒'
+        # subject = subjects
         message['Subject'] = Header(subject, 'utf-8')
 
         try:

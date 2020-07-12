@@ -846,7 +846,7 @@ class Mail(APIView):
         #     try:
         #         findUser = User.objects.all(username=item["username"])
         #         # 发送激活邮件，包含一个激活的链接在（get请求）
-        #         Util.send_register_active_email(findUser.email, findUser.username, "内容测试")
+        #         Util.send_register_active_email(findUser.email, title_result , content_result)
         #     except:
         #         pass
 
@@ -854,8 +854,7 @@ class Mail(APIView):
             'status': 0,
             'msg': 'ok',
             'results': {
-                'name': '百年孤独',
-                'price': 33.60
+
             }
         })
 
