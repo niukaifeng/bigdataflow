@@ -57,7 +57,7 @@ urlpatterns = [
     #获取控制台信息
     re_path(r'console',
         Console.as_view(), name='console'),
-    ###hock
+    ###hook
     re_path(r'emailchange',
             Mail.as_view(), name='emailchange'),
 
