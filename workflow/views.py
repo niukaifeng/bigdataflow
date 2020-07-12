@@ -860,6 +860,20 @@ class Mail(APIView):
 
         #Util.gen_signature_by_token(token)
 
+class Console(APIView):
+    def get(self, request):
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status, state_result = ins.getdata( method='get', url='/api/v1.0/tickets/num_statistics')
+        print(state_result)
+        return Response({
+            'code': 0,
+            'msg': 'ok',
+            'data': state_result['data']
+        })
+
+
+
+
 
 
 

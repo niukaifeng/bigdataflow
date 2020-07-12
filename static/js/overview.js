@@ -2,7 +2,7 @@
 $( document ).ready(function() {
     $.ajax({
       type: "GET",
-      url: "/api/v1.0/tickets/num_statistics",
+      url: "/workflow/console",
       cache: false,  //禁用缓存
       dataType: "json",
       success: function (result) {
