@@ -37,6 +37,9 @@ b_guanliyuanshenpi_char_xiangmuliushuihao
 
 g_sanfanghuiqian_text_sanfanghuiqian
 
+        loonflow                          物理明      db
+b_guanliyuanshenpi_char_xiangmubianhao  项目编号   project_id
+
 > 新增
 
 FLOWINPUTSTR
@@ -64,10 +67,10 @@ python -m pip install djangorestframework
 
 建议项目编号110/N00+年份+编号，并且建议项目编号可更改（项目编号处理前显示“等待指定”，处理后显示对应的项目编号）
 add:
-    1.创建公单
-    2.修改公单
+    1.创建公单  ok
+    2.修改公单  (流程流转) ok
 update
-    1.修改工单
+    1.修改工单 (流程流转) ok
  show 
     1.allticket
     2.index

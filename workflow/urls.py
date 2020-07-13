@@ -1,6 +1,6 @@
 from django.conf.urls import url, include,re_path
 
-from workflow.views import Console,Mail,Index,NewPro,TicketCreate,MyTicket,TicketDetail,SaveTempFlow,FlowDataFlap,MyToDoTicket,MyRelatedTicket,TickeFlowDetail,AllTicket,TicketFlowStep,TicketFlowBack,TicketTransition,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
+from workflow.views import Console,Mail,Index,NewPro,TicketCreate,MyTicket,TicketDetail,SaveTempFlow,FlowDataFlap,MyToDoTicket,MyRelatedTicket,TickeFlowDetail,AllTicket,TicketFlowStep,TicketFlowBack,TicketFlowlog,GetUserName,TicketBeforeFlowStep,downloadFile# , TicketDetail, TicketCreate
 
 
 urlpatterns = [
@@ -28,9 +28,6 @@ urlpatterns = [
     #驳回
     re_path(r'(?P<ticket_id>[0-9]+)/returnflowlogsback',
         TicketFlowBack.as_view(), name='returnflowlogsback'),
-    #工单流转（该函数没用上）
-    re_path(r'(?P<ticket_id>[0-9]+)/transitions',
-        TicketTransition.as_view(), name='tickettranstion'),
     #新建工单
     re_path(r'^ticket/(?P<workflow_id>[0-9]+)/new/$',
         TicketCreate.as_view(), name='ticketcreate'),

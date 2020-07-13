@@ -13,7 +13,7 @@ class TempWork(models.Model):
 
 class TempFlowIdRelation(models.Model):
     ticket_id =  models.CharField(verbose_name="编号id", primary_key=True,max_length=200,default="111")
-    project_id = models.CharField(verbose_name="项目编号", primary_key=True,max_length=200,default="等待指定")
+    project_id = models.CharField(verbose_name="项目编号", max_length=200,default="等待指定")
 # class ExtensionUser(models.Model):
 #     """创建一对一模型，并添加新的字段"""
 #     user = models.OneToOneField(User,on_delete=models.CASCADE)
