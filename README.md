@@ -39,7 +39,7 @@ b_guanliyuanshenpi_char_xiangmuliushuihao
 
 g_sanfanghuiqian_text_sanfanghuiqian
 
-        loonflow                          物理明      db
+        loonflow                          物理名      db
 b_guanliyuanshenpi_char_xiangmubianhao  项目编号   project_id
 
 > 新增
