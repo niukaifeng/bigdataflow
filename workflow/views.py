@@ -893,7 +893,7 @@ class Mail(APIView):
 
 class Console(APIView):
     def get(self, request):
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        ins = WorkFlowAPiRequest(username="admin")
         status, state_result = ins.getdata( method='get', url='/api/v1.0/tickets/num_statistics')
         # print(state_result)
         return Response({
