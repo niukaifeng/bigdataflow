@@ -62,3 +62,17 @@ FLOWINPUTSTR
 安装
 python -m pip install djangorestframework
 
+建议项目编号110/N00+年份+编号，并且建议项目编号可更改（项目编号处理前显示“等待指定”，处理后显示对应的项目编号）
+add:
+    1.创建公单
+    2.修改公单
+update
+    1.修改工单
+ show 
+    1.allticket
+    2.index
+    3.my
+    4.myrelated
+    5.mytodo
+    6.修改公单
+

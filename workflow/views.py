@@ -22,7 +22,7 @@ from workflow.apirequest import WorkFlowAPiRequest
 from django.contrib.auth.models import User
 from workflow.util.Utils import Util
 from django.conf import settings
-from workflow.models import TempWork
+from workflow.models import TempWork, TempFlowIdRelation
 from django.contrib.auth import authenticate
 
 # Create your views here.
@@ -492,6 +492,11 @@ class AllTicket(LoginRequiredMixin, TemplateView):
                         item['showFlowChatFlag'] = True
                     else:
                         item['showFlowChatFlag'] = False
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        pass
                 context['ticket_result_restful_list'] = resultList
         context['msg'] = state_result['msg']
         #print(context)

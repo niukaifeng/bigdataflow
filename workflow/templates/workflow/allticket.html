@@ -29,52 +29,6 @@
             "info": true,
             "iDisplayLength": 10,
             "autoWidth": false,
-			/*
-		///////////////////////////////////////
-		 ajax: function (data, callback, settings) {
-            console.log(data);
-            var param = {};
-            //param.per_page = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
-            //param.page = (data.start / data.length)+1;//当前页码
-            //param.search_value=data.search.value;
-            param.per_page =10
-			param.page = 1
-			param.search_value = 'admin'
-			console.log(param);    
-           
-			$.ajax({
-              type: "GET",
-              url: "http://www.ydyw.com:8008/workflow/all/",
-              cache: false,  //禁用缓存
-              data: param,  //传入组装的参数
-              dataType: "json",
-              success: function (result) {
-                 var returnData = {};
-                 returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
-                 returnData.recordsTotal = result.data.total;//返回数据全部记录
-                 returnData.recordsFiltered = result.data.total;//后台不实现过滤功能，每次查询均视作全部结果
-                 returnData.data = result.data.value;//返回的数据列表
-                //console.log(returnData);
-                //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
-                //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
-        
-                // 填充新增流转记录表单中可选的源和目标状态
-                
-				$("#sourceStateId").empty();
-                $("#destinationStateId").empty();
-                result.data.value.map(function(currentValue,index,arr){$("#sourceStateId").append("<option value=" + "'" + currentValue.id + "'" + ">" + currentValue.name + "</option>");})
-                result.data.value.map(function(currentValue,index,arr){$("#destinationStateId").append("<option value=" + "'" + currentValue.id + "'" + ">" + currentValue.name + "</option>");})
-                
-				callback(returnData);
-				
-            },
-                 
-            })
-            
-		    console.log("数据")
-    },
-        ///////////////////////////////////////		
-			*/
         });
        
 		});
@@ -146,7 +100,7 @@
 {#                                {{ forloop.revcounter }}#}
                         <tr>
                             <td>{{ticket.workflow_info.workflow_name}}{{ticket.sn}}</td>
-                            <td>{{ticket.sn}}</td>
+                            <td>{{ticket.project_id}}</td>
                             <td>{{ticket.title}}</td>
 {#                            <td>{{ticket.workflow_info.workflow_name}}</td>#}
                             <td>{{ticket.state.state_name}}</td>
