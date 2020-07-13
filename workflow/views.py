@@ -22,7 +22,7 @@ from workflow.apirequest import WorkFlowAPiRequest
 from django.contrib.auth.models import User
 from workflow.util.Utils import Util
 from django.conf import settings
-from workflow.models import TempWork
+from workflow.models import TempWork, TempFlowIdRelation
 from django.contrib.auth import authenticate
 
 # Create your views here.
@@ -79,10 +79,7 @@ class TicketCreate(LoginRequiredMixin, FormView):
         ins = WorkFlowAPiRequest(username=self.request.user.username)
         status, state_result = ins.getdata({}, method='get',
                                            url='/api/v1.0/workflows/{0}/init_state'.format(workflow_id))
-        # print(1)
-        # print(state_result)
         state_result = state_result['data']
-
         self.kwargs.update({'state_result': state_result})
 
         #print(state_result.keys())
@@ -191,6 +188,11 @@ class MyTicket(LoginRequiredMixin, TemplateView):
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
                 resultList = state_result['data']['value']
                 for item in resultList:
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        item['project_id'] = "等待指定"
                     if item['state']['state_name'] == '施工进度':
                         item['showFlowChatFlag'] = True
                     else:
@@ -292,7 +294,12 @@ class TicketDetail(LoginRequiredMixin, FormView):
                     if field['field_key']  == 'j_shigongjindu_float_muqianbaopoliefeng':
                         field['default_value'] = j_shigongjindu_float_muqianbaopoliefeng
 
-
+                    if field['field_key']  == 'b_guanliyuanshenpi_char_xiangmubianhao':
+                        try:
+                            flowretion = TempFlowIdRelation.objects.get(ticket_id=self.kwargs.get('ticket_id'))
+                            field['default_value'] = flowretion.project_id
+                        except:
+                            pass
 
                     out_list.append(field)
 
@@ -332,7 +339,6 @@ class TicketDetail(LoginRequiredMixin, FormView):
         flow_code = state_result['sn']
 
         flow_code = flow_code[flow_code.find("_")+1::]
-
         #为了组建显示
         context['state_result'] = state_result
         context['workflow_name'] = workflow_name
@@ -389,6 +395,18 @@ class TicketDetail(LoginRequiredMixin, FormView):
             status, state_result = ins.getdata(data=form_data, method='patch',
                                                url='/api/v1.0/tickets/{0}'.format(ticket_id))
 
+            if  form_data['b_guanliyuanshenpi_char_xiangmubianhao'] != None :
+                try:
+                    tempFlowIdRelation = TempFlowIdRelation.objects.get(ticket_id=ticket_id)
+                    tempFlowIdRelation.ticket_id = state_result["ticket_id"]
+                    tempFlowIdRelation.project_id = form_data['b_guanliyuanshenpi_char_xiangmubianhao']
+                    tempFlowIdRelation.save()
+                except:
+                    tempFlowIdRelation = TempFlowIdRelation()
+                    tempFlowIdRelation.ticket_id = ticket_id
+                    tempFlowIdRelation.project_id = form_data['b_guanliyuanshenpi_char_xiangmubianhao']
+                    tempFlowIdRelation.save()
+
         return super().form_valid(form)
 
 
@@ -414,6 +432,14 @@ class MyToDoTicket(LoginRequiredMixin, TemplateView):
         ins = WorkFlowAPiRequest(username=self.request.user.username)
         status,state_result = ins.getdata(parameters=dict(category='duty'),method='get',url='/api/v1.0/tickets')
         #print(state_result)
+        resultList = state_result['data']['value']
+        for item in resultList:
+            try:
+                flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                item['project_id'] = flowretion.project_id
+            except:
+                item['project_id'] = "等待指定"
+
         if status:
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and isinstance(state_result['data'],dict) and 'value' in state_result['data'].keys():
                 context['ticket_result_restful_list'] = state_result['data']['value']
@@ -449,6 +475,11 @@ class MyRelatedTicket(LoginRequiredMixin, TemplateView):
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
                 resultList = state_result['data']['value']
                 for item in resultList:
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        item['project_id'] = "等待指定"
                     if item['state']['state_name'] == '施工进度':
                         item['showFlowChatFlag'] = True
                     else:
@@ -492,9 +523,16 @@ class AllTicket(LoginRequiredMixin, TemplateView):
                         item['showFlowChatFlag'] = True
                     else:
                         item['showFlowChatFlag'] = False
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        item['project_id'] = "等待指定"
+
                 context['ticket_result_restful_list'] = resultList
         context['msg'] = state_result['msg']
-        #print(context)
+
+
         try:
             Util.judgePremission(self.request.user.username, context)
         except:
@@ -516,14 +554,7 @@ class TicketFlowStep(LoginRequiredMixin,View):
         status,state_result = ins.getdata(parameters={},method='get',url='/api/v1.0/tickets/{0}/flowsteps'.format(self.kwargs.get('ticket_id')))
         return JsonResponse(data=state_result)
 
-# 工单流转时，可以做的操作   by kf
-class TicketTransition(LoginRequiredMixin,View):
-    """
-    工单可以做的操作
-    """
 
-    def get(self, request, *args, **kwargs):
-        pass
 
 #工单流转的记录日志    by kf
 class TicketFlowlog(LoginRequiredMixin,View):

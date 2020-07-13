@@ -87,7 +87,7 @@
                             {% for ticket in ticket_result_restful_list %}
                         <tr>
                             <td>{{ticket.workflow_info.workflow_name}}{{ticket.sn}}</td>
-                            <td>{{ticket.sn}}</td>
+                            <td>{{ticket.project_id}}</td>
                             <td>{{ticket.title}}</td>
 {#                            <td>{{ticket.workflow_info.workflow_name}}</td>#}
                             <td>{{ticket.state.state_name}}</td>
