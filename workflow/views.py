@@ -514,7 +514,7 @@ class AllTicket(LoginRequiredMixin, TemplateView):
         category = request_data.get('category')
 
         ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,state_result = ins.getdata(parameters=dict(category='all'),method='get',url='/api/v1.0/tickets')
+        status,state_result = ins.getdata(parameters=dict(category='all',per_page=per_page,page =page ),method='get',url='/api/v1.0/tickets')
         if status:
             if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
                 resultList = state_result['data']['value']
