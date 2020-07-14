@@ -902,6 +902,69 @@ class Console(APIView):
             'data': state_result['data']
         })
 
+class RevicePageData(APIView):
+    def get(self, request):
+        params = json.loads(dict(request.query_params)['dataArray'][0])
+        per_page = int(params['pagesize'])
+        page = int(params['page'])
+        category = params['category']
+
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status, state_result = ins.getdata(parameters=dict(category=category, per_page=per_page, page=page), method='get',
+                                           url='/api/v1.0/tickets')
+
+        status2, state_result2 = ins.getdata(parameters=dict(category=category, per_page=10000000, page=1),
+                                           method='get',
+                                           url='/api/v1.0/tickets')
+
+        outlist = list()
+
+        if status:
+            if len(state_result) > 0 and isinstance(state_result, dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    flowid = item['workflow_info']['workflow_name'] + item['sn']
+                    projectid = "等待指定"
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        projectid = flowretion.project_id
+                    except:
+                        pass
+                    title = item['title']
+                    state_name = item['state']['state_name']
+                    creator = item['creator']
+                    gmt_created = item['gmt_created']
+                    gmt_modified = item['gmt_modified']
+                    id = item["id"]
+                    workflow_name = item["workflow_info"]["workflow_name"]
+
+                    a_href = "<a href='/workflow/ticket/{0}/?workflow_name={1}'>详情</a>".format(id,workflow_name)
+                    if item['state']['state_name'] == '施工进度':
+                        a_href = a_href + ("&nbsp;|&nbsp; <a href='/workflow/{}/tickeflowdetail'>进度</a> ".format(id))
+                    action = a_href
+
+                    outdic = {
+                        'flowid': flowid,
+                        'projectid': title,
+                        'title':title,
+                        'state_name': state_name,
+                        'creator': creator,
+                        'gmt_created':gmt_created,
+                        'gmt_modified': gmt_modified,
+                        'action': action,
+
+                    }
+                    outlist.append(outdic)
+
+        return Response({
+            'code': 0,
+            'msg': 'ok',
+            'totalCount':len(outlist),
+            'totalCounts': len(state_result2['data']['value']),
+            'data':outlist
+        })
+
+
 
 
 
