@@ -16,9 +16,94 @@
 
 <script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
 <script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
-<script type="text/javascript" charset="utf8" src="{% static 'js/common.js'%} "></script>
 
+<script type="application/javascript">
+	$(function () {
+		$('#sample_3').DataTable({
+            language: {
+                "processing":   "处理中...",
+                "lengthMenu":   "_MENU_ 记录/页",
+                "zeroRecords":  "没有匹配的记录",
+                "info":         "第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "infoEmpty":    "第 0 至 0 项记录，共 0 项",
+                "infoFiltered": "",
+                "infoPostFix":  "",
+                "search":       "搜索:",
+                "url":          "",
+                "decimal": ",",
+                "thousands": ".",
+                "emptyTable":"未找到符合条件的数据",
+                "paginate": {
+                    "first":    "首页",
+                    "previous": "上页",
+                    "next":     "下页",
+                    "last":     "末页"
+                }
+            },
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "order": [[ 0, "desc" ]],
+            "info": true,
+            "iDisplayLength": 10,
+            "autoWidth": false,
+            bLengthChange:true,
+            pageLength: 10,//每页显示10条数
+            serverSide: true,
+            ajax: function (data, callback, settings) {
+                //封装相应的请求参数，这里获取页大小和当前页码
+                var pagesize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候,页大小
+                var start = data.start;//开始的记录序号
+                var page = (data.start) / data.length + 1;//当前页码
+                var data = {
+                    page: page,
+                    pagesize: pagesize,//这里只传了当前页和页大小，如果有其他参数，可继续封装
+                    category:"all"
+                };
+                var json={
+                        dataArray:JSON.stringify(data)
+                };
+                $.ajax({
+                    type: "GET",
+                    url: "/workflow/setpagedata",
+                    cache : false,  //禁用缓存
+                    data: json,   //传入已封装的参数
+                    dataType: "json",//返回数据格式为json
+                    success: function(data) {
+                        var arr = "";
+                        if ('object' == typeof data) {
+                            arr = data;
+                        } else {
+                            arr = $.parseJSON(data);//将json字符串转化为了一个Object对象
+                        }
 
+                        var returnData = {};
+
+                        returnData.recordsTotal = arr.totalCount;
+                        returnData.recordsFiltered = arr.totalCounts;
+                        returnData.data = arr.data;
+
+                        callback(returnData);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        console.log("查询失败");
+                    }
+                });
+            },
+            columns: [
+                {"data": "flowid", "defaultContent": "<td></td>"},
+                {"data": "projectid", "defaultContent": "<td></td>"},
+                {"data": "title", "defaultContent": "<td></td>"},
+                {"data": "state_name", "defaultContent": "<td></td>"},
+                {"data": "creator", "defaultContent": "<td></td>"},
+                {"data": "gmt_created", "defaultContent": "<td></td>"},
+                {"data": "gmt_modified", "defaultContent": "<td></td>"},
+                {"data": "action", "defaultContent": "<td></td>"}
+            ]
+        });
+    });
+</script>
 {% endblock %}
 
 {% block css %}
@@ -72,6 +157,7 @@
                             <th >项目流水号</th>
                             <th >项目编号</th>
                             <th >项目名称</th>
+{#                            <th >业务流程</th>#}
                             <th >当前状态</th>
                             <th >创建人</th>
                             <th >创建时间</th>
@@ -80,7 +166,29 @@
                         </tr>
                         </thead>
                         <tbody>
-
+                        {% if ticket_result_restful_list %}
+                            {% for ticket in ticket_result_restful_list %}
+{#                                {{ forloop.revcounter }}#}
+                        <tr>
+                            <td>{{ticket.workflow_info.workflow_name}}{{ticket.sn}}</td>
+                            <td>{{ticket.project_id}}</td>
+                            <td>{{ticket.title}}</td>
+{#                            <td>{{ticket.workflow_info.workflow_name}}</td>#}
+                            <td>{{ticket.state.state_name}}</td>
+                            <td>{{ticket.creator}}</td>
+                            <td>{{ticket.gmt_created}}</td>
+                            <td>{{ticket.gmt_modified}}</td>
+                            <td>
+                                <a href="{% url 'ticketdetailtable' ticket.id %}?workflow_name= {{ticket.workflow_info.workflow_name}}">详情</a>
+                                {% if ticket.showFlowChatFlag %}
+                                    &nbsp;|&nbsp;
+                                    <a href="{% url 'tickeflowdetail' ticket.id %}">进度</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
                         </table>
                 </div>
             </div>
