@@ -5,12 +5,14 @@ from django.db.models.signals import post_save # 导入post_save信号
 # from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+# 处理施工进度更新
 class TempWork(models.Model):
 
     ticket_id = models.CharField(verbose_name="工单id", primary_key=True,max_length=200,default="111")
     #  该字段为主键
     process_recod = models.CharField('进度', max_length=2048)
 
+# 添加项目编号列，项目编号为自定义控件
 class TempFlowIdRelation(models.Model):
     ticket_id =  models.CharField(verbose_name="工单id", primary_key=True,max_length=200,default="111")
     project_id = models.CharField(verbose_name="项目编号", max_length=200,default="等待指定")
