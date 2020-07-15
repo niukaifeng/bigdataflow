@@ -945,7 +945,7 @@ class RevicePageData(APIView):
 
                     outdic = {
                         'flowid': flowid,
-                        'projectid': title,
+                        'projectid': projectid,
                         'title':title,
                         'state_name': state_name,
                         'creator': creator,
