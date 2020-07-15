@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View, FormView
@@ -946,7 +945,7 @@ class RevicePageData(APIView):
 
                     outdic = {
                         'flowid': flowid,
-                        'projectid': projectid,
+                        'projectid': title,
                         'title':title,
                         'state_name': state_name,
                         'creator': creator,
@@ -964,3 +963,14 @@ class RevicePageData(APIView):
             'totalCounts': len(state_result2['data']['value']),
             'data':outlist
         })
+
+
+
+
+
+
+
+
+
+
+
