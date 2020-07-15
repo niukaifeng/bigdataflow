@@ -55,13 +55,11 @@
                 //封装相应的请求参数，这里获取页大小和当前页码
                 var pagesize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候,页大小
                 var start = data.start;//开始的记录序号
-                var page = (data.start) / data.length + 1;//当前页totals码
-                var total = $("#totoal").val();
+                var page = (data.start) / data.length + 1;//当前页码
                 var data = {
                     page: page,
                     pagesize: pagesize,//这里只传了当前页和页大小，如果有其他参数，可继续封装
-                    category:"all",
-                    totals:total
+                    category:"all"
                 };
                 var json={
                         dataArray:JSON.stringify(data)
@@ -77,10 +75,11 @@
                         if ('object' == typeof data) {
                             arr = data;
                         } else {
-                            arr = $.parseJSON(data);
+                            arr = $.parseJSON(data);//将json字符串转化为了一个Object对象
                         }
+
                         var returnData = {};
-                        $("#totoal").val(arr.totalCounts);
+
                         returnData.recordsTotal = arr.totalCount;
                         returnData.recordsFiltered = arr.totalCounts;
                         returnData.data = arr.data;
@@ -100,7 +99,7 @@
                 {"data": "creator", "defaultContent": "<td></td>"},
                 {"data": "gmt_created", "defaultContent": "<td></td>"},
                 {"data": "gmt_modified", "defaultContent": "<td></td>"},
-                {"data": "action", "defaultContent": "<td></td>"},
+                {"data": "action", "defaultContent": "<td></td>"}
             ]
         });
     });
@@ -148,7 +147,6 @@
                                 <li><a href="#">Separated link</a></li>
                             </ul>
                         </div>
-                        <input type="hidden" id = "totoal" value="-1" />
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
