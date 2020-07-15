@@ -908,17 +908,14 @@ class RevicePageData(APIView):
         per_page = int(params['pagesize'])
         page = int(params['page'])
         category = params['category']
-        totals = params['totals']
-
 
         ins = WorkFlowAPiRequest(username=self.request.user.username)
         status, state_result = ins.getdata(parameters=dict(category=category, per_page=per_page, page=page), method='get',
                                            url='/api/v1.0/tickets')
-        if totals == -1 :
-            status2, state_result2 = ins.getdata(parameters=dict(category=category, per_page=10000000, page=1),
-                                               method='get',
-                                               url='/api/v1.0/tickets')
-            totals = len(state_result2['data']['value'])
+
+        status2, state_result2 = ins.getdata(parameters=dict(category=category, per_page=10000000, page=1),
+                                           method='get',
+                                           url='/api/v1.0/tickets')
 
         outlist = list()
 
@@ -948,7 +945,7 @@ class RevicePageData(APIView):
 
                     outdic = {
                         'flowid': flowid,
-                        'projectid': projectid,
+                        'projectid': title,
                         'title':title,
                         'state_name': state_name,
                         'creator': creator,
@@ -963,7 +960,7 @@ class RevicePageData(APIView):
             'code': 0,
             'msg': 'ok',
             'totalCount':len(outlist),
-            'totalCounts': totals,
+            'totalCounts': len(state_result2['data']['value']),
             'data':outlist
         })
 
