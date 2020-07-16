@@ -1,3 +1,5 @@
+
+
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View, FormView
@@ -181,25 +183,6 @@ class MyTicket(LoginRequiredMixin, TemplateView):
         reverse = int(request_data.get('reverse', 1))
         per_page = int(request_data.get('per_page', 10))
         page = int(request_data.get('page', 1))
-        # 待办,关联的,创建
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,state_result = ins.getdata(parameters=dict(category='owner'),method='get',url='/api/v1.0/tickets')
-        if status:
-            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
-                resultList = state_result['data']['value']
-                for item in resultList:
-                    try:
-                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
-                        item['project_id'] = flowretion.project_id
-                    except:
-                        item['project_id'] = "等待指定"
-                    if item['state']['state_name'] == '施工进度':
-                        item['showFlowChatFlag'] = True
-                    else:
-                        item['showFlowChatFlag'] = False
-                context['ticket_result_restful_list'] = resultList
-        context['msg'] = state_result['msg']
-        #print(context)
         try:
             Util.judgePremission(self.request.user.username, context)
         except :
@@ -429,22 +412,6 @@ class MyToDoTicket(LoginRequiredMixin, TemplateView):
         # 待办,关联的,创建
         category = request_data.get('category')
         #因为需要对应不同username，所以接口返回的数据也不同
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,state_result = ins.getdata(parameters=dict(category='duty'),method='get',url='/api/v1.0/tickets')
-        #print(state_result)
-        resultList = state_result['data']['value']
-        for item in resultList:
-            try:
-                flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
-                item['project_id'] = flowretion.project_id
-            except:
-                item['project_id'] = "等待指定"
-
-        if status:
-            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and isinstance(state_result['data'],dict) and 'value' in state_result['data'].keys():
-                context['ticket_result_restful_list'] = state_result['data']['value']
-        context['msg'] = state_result['msg']
-        #print(context)
         try:
             Util.judgePremission(self.request.user.username, context)
         except:
@@ -467,25 +434,6 @@ class MyRelatedTicket(LoginRequiredMixin, TemplateView):
         reverse = int(request_data.get('reverse', 1))
         per_page = int(request_data.get('per_page', 10))
         page = int(request_data.get('page', 1))
-        # 待办,关联的,创建
-        category = request_data.get('category')
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,state_result = ins.getdata(parameters=dict(category='relation'),method='get',url='/api/v1.0/tickets')
-        if status:
-            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
-                resultList = state_result['data']['value']
-                for item in resultList:
-                    try:
-                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
-                        item['project_id'] = flowretion.project_id
-                    except:
-                        item['project_id'] = "等待指定"
-                    if item['state']['state_name'] == '施工进度':
-                        item['showFlowChatFlag'] = True
-                    else:
-                        item['showFlowChatFlag'] = False
-                context['ticket_result_restful_list'] = resultList
-        context['msg'] = state_result['msg']
 
         try:
             Util.judgePremission(self.request.user.username, context)
@@ -512,27 +460,6 @@ class AllTicket(LoginRequiredMixin, TemplateView):
         page = int(request_data.get('page', 1))
         # 待办,关联的,创建
         category = request_data.get('category')
-
-        ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status,state_result = ins.getdata(parameters=dict(category='all',per_page=per_page,page =page ),method='get',url='/api/v1.0/tickets')
-        if status:
-            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
-                resultList = state_result['data']['value']
-                for item in resultList:
-                    if item['state']['state_name'] == '施工进度':
-                        item['showFlowChatFlag'] = True
-                    else:
-                        item['showFlowChatFlag'] = False
-                    try:
-                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
-                        item['project_id'] = flowretion.project_id
-                    except:
-                        item['project_id'] = "等待指定"
-
-                context['ticket_result_restful_list'] = resultList
-        context['msg'] = state_result['msg']
-
-
         try:
             Util.judgePremission(self.request.user.username, context)
         except:
@@ -693,7 +620,7 @@ class FlowDataFlap(LoginRequiredMixin,View):
         request_data = request.GET
         ticket_id = kwargs.get('ticket_id')
 
-        datadic = dict
+        datadic = dict()
         try :
             datadic = eval(TempWork.objects.get(ticket_id=ticket_id).process_recod)
         except:
@@ -908,17 +835,17 @@ class RevicePageData(APIView):
         per_page = int(params['pagesize'])
         page = int(params['page'])
         category = params['category']
-
+        searchKey = params['searchKey']
+        order = params['order']
         ins = WorkFlowAPiRequest(username=self.request.user.username)
-        status, state_result = ins.getdata(parameters=dict(category=category, per_page=per_page, page=page), method='get',
-                                           url='/api/v1.0/tickets')
-
-        status2, state_result2 = ins.getdata(parameters=dict(category=category, per_page=10000000, page=1),
-                                           method='get',
-                                           url='/api/v1.0/tickets')
-
+        status, state_result = ins.getdata(parameters=dict(category=category, per_page=per_page, page=page,title =searchKey ), method='get',
+                                       url='/api/v1.0/tickets')
+        mytotal = 0
+        status2, state_result2 = ins.getdata(parameters=dict(category=category, per_page=10000000, page=1,title =searchKey),
+                                               method='get',url='/api/v1.0/tickets')
+        mytotal = len(state_result2['data']['value'])
         outlist = list()
-
+        outlen = 0
         if status:
             if len(state_result) > 0 and isinstance(state_result, dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
                 resultList = state_result['data']['value']
@@ -937,7 +864,6 @@ class RevicePageData(APIView):
                     gmt_modified = item['gmt_modified']
                     id = item["id"]
                     workflow_name = item["workflow_info"]["workflow_name"]
-
                     a_href = "<a href='/workflow/ticket/{0}/?workflow_name={1}'>详情</a>".format(id,workflow_name)
                     if item['state']['state_name'] == '施工进度':
                         a_href = a_href + ("&nbsp;|&nbsp; <a href='/workflow/{}/tickeflowdetail'>进度</a> ".format(id))
@@ -945,7 +871,7 @@ class RevicePageData(APIView):
 
                     outdic = {
                         'flowid': flowid,
-                        'projectid': projectid,
+                        'projectid': title,
                         'title':title,
                         'state_name': state_name,
                         'creator': creator,
@@ -955,22 +881,23 @@ class RevicePageData(APIView):
 
                     }
                     outlist.append(outdic)
+        if order != "":
+            sort_arr = str(order).split(",")
+            if len(sort_arr) > 1:
+                colum_str = str(sort_arr[0])
 
+                if str(sort_arr[1]).upper() == "ASC":
+                    outlist.sort(key = lambda x: (x.get(colum_str)) , reverse = False)
+                    outlen = len(outlist)
+                else:
+                    outlist.sort(key = lambda x: (x.get(colum_str)) , reverse = True)
+                    outlen = len(outlist)
+        else:
+            outlen = len(outlist)
         return Response({
             'code': 0,
             'msg': 'ok',
-            'totalCount':len(outlist),
-            'totalCounts': len(state_result2['data']['value']),
-            'data':outlist
+            'totalCount':outlen,
+            'totalCounts': mytotal,
+            'data':outlist,
         })
-
-
-
-
-
-
-
-
-
-
-
