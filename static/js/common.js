@@ -1,4 +1,6 @@
 $(function () {
+    var script = document.getElementsByTagName("script");
+    eval(script[script.length-1].innerhtml);
 		$('#sample_3').DataTable({
             language: {
                 "processing":   "处理中...",
@@ -6,9 +8,9 @@ $(function () {
                 "zeroRecords":  "没有匹配的记录",
                 "info":         "第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
                 "infoEmpty":    "第 0 至 0 项记录，共 0 项",
-                "infoFiltered": "(由 _MAX_ 项记录过滤)",
+                "infoFiltered": "",
                 "infoPostFix":  "",
-                "search":       "搜索:",
+                "search":       "项目名称查询:",
                 "url":          "",
                 "decimal": ",",
                 "thousands": ".",
@@ -55,7 +57,7 @@ $(function () {
                 var data = {
                     page: page,
                     pagesize: pagesize,//这里只传了当前页和页大小，如果有其他参数，可继续封装
-                    category:mycategory,
+                    category: mycategory,
                     searchKey:searchKey,
                     order:order
                 };
