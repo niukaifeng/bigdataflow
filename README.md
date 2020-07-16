@@ -1,5 +1,5 @@
 ## ——待办任务——
-1. 搜索和排序功能，其他页面的分页问题，
+1. 搜索和排序功能
 2. 驳回提示"必填"bug
 3. 等待发布测试发邮件问题
 
@@ -39,9 +39,6 @@ b_guanliyuanshenpi_char_xiangmuliushuihao
 
 g_sanfanghuiqian_text_sanfanghuiqian
 
-        loonflow                          物理名      db
-b_guanliyuanshenpi_char_xiangmubianhao  项目编号   project_id
-
 > 新增
 
 FLOWINPUTSTR
@@ -51,6 +48,9 @@ FLOWINPUTSTR
    * 当前已完成切缝钻孔/米        j_shigongjindu_float_muqianqiefengzhuankong
    * 总爆破裂缝/米               j_shigongjindu_float_zongbaopoliefeng
    * 当前已完成爆破裂缝/米        j_shigongjindu_float_muqianbaopoliefeng
+   
+           loonflow                          物理名      db
+   * b_guanliyuanshenpi_char_xiangmubianhao  项目编号   project_id
 
 
 ## 关于数据保存工单信息的想法
@@ -59,13 +59,15 @@ FLOWINPUTSTR
 * 查看 -- 数据库查询数据
 * 保存 -- 数据库插入数据
 
+> 进入 项目编号
+* 查看 -- 数据库查询数据
+* 保存 -- 数据库插入数据
+
+
 ## TODO 顾
 [] 整合固定字段
 [] 单独显示进度条
 [] 数据柏村    
-
-安装
-python -m pip install djangorestframework
 
 建议项目编号110/N00+年份+编号，并且建议项目编号可更改（项目编号处理前显示“等待指定”，处理后显示对应的项目编号）
 add:
