@@ -8,7 +8,21 @@
 {% block js %}
 <script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/jquery.dataTables.min.js'%} "></script>
 <script type="text/javascript" charset="utf8" src="{% static 'datatables/media/js/dataTables.bootstrap.min.js'%} "></script>
-<script type="text/javascript" charset="utf8" src="{% static 'js/common.js'%} "></script>
+{#    此段脚本为页面的show entries、search和翻页控件#}
+<script type="application/javascript">
+    $(function () {
+        $('#sample_3').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "order": [[ 0, "desc" ]],
+            "info": true,
+            "iDisplayLength": 10,
+            "autoWidth": false,
+        });
+    });
+</script>
 {% endblock %}
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'datatables/media/css/dataTables.bootstrap.min.css' %}">
@@ -71,7 +85,27 @@
                         </tr>
                         </thead>
                         <tbody>
-
+                        {% if ticket_result_restful_list %}
+                            {% for ticket in ticket_result_restful_list %}
+                        <tr>
+                            <td>{{ticket.workflow_info.workflow_name}}{{ticket.sn}}</td>
+                            <td>{{ticket.project_id}}</td>
+                            <td>{{ticket.title}}</td>
+{#                            <td>{{ticket.workflow_info.workflow_name}}</td>#}
+                            <td>{{ticket.state.state_name}}</td>
+                            <td>{{ticket.creator}}</td>
+                            <td>{{ticket.gmt_created}}</td>
+                            <td>{{ticket.gmt_modified}}</td>
+                            <td>
+                                <a href="{% url 'ticketdetailtable' ticket.id %}?workflow_name= {{ticket.workflow_info.workflow_name}}">详情</a>
+                                {% if ticket.showFlowChatFlag %}
+                                    &nbsp;|&nbsp;
+                                    <a href="{% url 'tickeflowdetail' ticket.id %}">进度</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                            {% endfor %}
+                        {% endif %}
                         </tbody>
                         </table>
                 </div>

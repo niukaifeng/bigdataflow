@@ -1,5 +1,3 @@
-
-
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View, FormView
@@ -183,6 +181,25 @@ class MyTicket(LoginRequiredMixin, TemplateView):
         reverse = int(request_data.get('reverse', 1))
         per_page = int(request_data.get('per_page', 10))
         page = int(request_data.get('page', 1))
+        # 待办,关联的,创建
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status,state_result = ins.getdata(parameters=dict(category='owner',per_page=10000000,page =page),method='get',url='/api/v1.0/tickets')
+        if status:
+            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        item['project_id'] = "等待指定"
+                    if item['state']['state_name'] == '施工进度':
+                        item['showFlowChatFlag'] = True
+                    else:
+                        item['showFlowChatFlag'] = False
+                context['ticket_result_restful_list'] = resultList
+        context['msg'] = state_result['msg']
+        #print(context)
         try:
             Util.judgePremission(self.request.user.username, context)
         except :
@@ -412,6 +429,22 @@ class MyToDoTicket(LoginRequiredMixin, TemplateView):
         # 待办,关联的,创建
         category = request_data.get('category')
         #因为需要对应不同username，所以接口返回的数据也不同
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status,state_result = ins.getdata(parameters=dict(category='duty',per_page=10000000,page =page),method='get',url='/api/v1.0/tickets')
+        #print(state_result)
+        resultList = state_result['data']['value']
+        for item in resultList:
+            try:
+                flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                item['project_id'] = flowretion.project_id
+            except:
+                item['project_id'] = "等待指定"
+
+        if status:
+            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and isinstance(state_result['data'],dict) and 'value' in state_result['data'].keys():
+                context['ticket_result_restful_list'] = state_result['data']['value']
+        context['msg'] = state_result['msg']
+        #print(context)
         try:
             Util.judgePremission(self.request.user.username, context)
         except:
@@ -434,6 +467,25 @@ class MyRelatedTicket(LoginRequiredMixin, TemplateView):
         reverse = int(request_data.get('reverse', 1))
         per_page = int(request_data.get('per_page', 10))
         page = int(request_data.get('page', 1))
+        # 待办,关联的,创建
+        category = request_data.get('category')
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status,state_result = ins.getdata(parameters=dict(category='relation',per_page=10000000,page =page),method='get',url='/api/v1.0/tickets')
+        if status:
+            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        item['project_id'] = "等待指定"
+                    if item['state']['state_name'] == '施工进度':
+                        item['showFlowChatFlag'] = True
+                    else:
+                        item['showFlowChatFlag'] = False
+                context['ticket_result_restful_list'] = resultList
+        context['msg'] = state_result['msg']
 
         try:
             Util.judgePremission(self.request.user.username, context)
@@ -460,6 +512,27 @@ class AllTicket(LoginRequiredMixin, TemplateView):
         page = int(request_data.get('page', 1))
         # 待办,关联的,创建
         category = request_data.get('category')
+
+        ins = WorkFlowAPiRequest(username=self.request.user.username)
+        status,state_result = ins.getdata(parameters=dict(category='all',per_page=10000000,page =page ),method='get',url='/api/v1.0/tickets')
+        if status:
+            if len(state_result) > 0 and isinstance(state_result,dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
+                resultList = state_result['data']['value']
+                for item in resultList:
+                    if item['state']['state_name'] == '施工进度':
+                        item['showFlowChatFlag'] = True
+                    else:
+                        item['showFlowChatFlag'] = False
+                    try:
+                        flowretion = TempFlowIdRelation.objects.get(ticket_id=item['id'])
+                        item['project_id'] = flowretion.project_id
+                    except:
+                        item['project_id'] = "等待指定"
+
+                context['ticket_result_restful_list'] = resultList
+        context['msg'] = state_result['msg']
+
+
         try:
             Util.judgePremission(self.request.user.username, context)
         except:
@@ -620,7 +693,7 @@ class FlowDataFlap(LoginRequiredMixin,View):
         request_data = request.GET
         ticket_id = kwargs.get('ticket_id')
 
-        datadic = dict()
+        datadic = dict
         try :
             datadic = eval(TempWork.objects.get(ticket_id=ticket_id).process_recod)
         except:
