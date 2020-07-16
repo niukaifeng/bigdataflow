@@ -837,21 +837,15 @@ class RevicePageData(APIView):
         category = params['category']
         searchKey = params['searchKey']
         order = params['order']
-
         ins = WorkFlowAPiRequest(username=self.request.user.username)
         status, state_result = ins.getdata(parameters=dict(category=category, per_page=per_page, page=page,title =searchKey ), method='get',
                                        url='/api/v1.0/tickets')
-
         mytotal = 0
-
         status2, state_result2 = ins.getdata(parameters=dict(category=category, per_page=10000000, page=1,title =searchKey),
                                                method='get',url='/api/v1.0/tickets')
         mytotal = len(state_result2['data']['value'])
-
         outlist = list()
-
         outlen = 0
-
         if status:
             if len(state_result) > 0 and isinstance(state_result, dict) and 'data' in state_result.keys() and 'value' in state_result['data'].keys():
                 resultList = state_result['data']['value']
@@ -870,7 +864,6 @@ class RevicePageData(APIView):
                     gmt_modified = item['gmt_modified']
                     id = item["id"]
                     workflow_name = item["workflow_info"]["workflow_name"]
-
                     a_href = "<a href='/workflow/ticket/{0}/?workflow_name={1}'>详情</a>".format(id,workflow_name)
                     if item['state']['state_name'] == '施工进度':
                         a_href = a_href + ("&nbsp;|&nbsp; <a href='/workflow/{}/tickeflowdetail'>进度</a> ".format(id))
@@ -888,9 +881,6 @@ class RevicePageData(APIView):
 
                     }
                     outlist.append(outdic)
-
-
-
         if order != "":
             sort_arr = str(order).split(",")
             if len(sort_arr) > 1:
