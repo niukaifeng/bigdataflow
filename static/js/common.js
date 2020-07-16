@@ -55,10 +55,9 @@ $(function () {
                 var data = {
                     page: page,
                     pagesize: pagesize,//这里只传了当前页和页大小，如果有其他参数，可继续封装
-                    category:"all",
+                    category:mycategory,
                     searchKey:searchKey,
-                    order:order,
-
+                    order:order
                 };
                 var json={
                         dataArray:JSON.stringify(data)
