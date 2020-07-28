@@ -884,11 +884,9 @@ class Mail(APIView):
         #         pass
 
         return Response({
-            'code': 0,
-            'msg': 'ok',
-            'results': {
-
-            }
+            "code": 0,
+            "msg": "",
+            "data": {}
         })
 
         #Util.gen_signature_by_token(token)
