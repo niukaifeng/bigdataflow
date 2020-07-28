@@ -147,7 +147,8 @@ class TicketCreate(LoginRequiredMixin, FormView):
                 file = form.files[file_key].file
                 file_name  = form.files[file_key].name
                 curr_time = datetime.datetime.now()
-                form_data[file_key] = os.path.abspath(os.curdir)+ '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + '-' + str(curr_time.microsecond) + '_' + file_name
+                form_data[file_key] = os.path.abspath(os.curdir)+ '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ \
+                                      '-' + str(curr_time.minute) + '-' + str(curr_time.second) + '-' + str(curr_time.microsecond) + '_' + file_name
                 Util.saveFile(file,form_data[file_key])
 
             for key, value in form_data.items():
@@ -218,7 +219,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
 
         ins = WorkFlowAPiRequest(username=self.request.user.username)
 
-        #获取组建
+        #调用接口获取控件
         status, state_result = ins.getdata(parameters={}, method='get',
                                            url='/api/v1.0/tickets/{0}'.format(ticket_id))
         #获取提交按钮
@@ -382,7 +383,8 @@ class TicketDetail(LoginRequiredMixin, FormView):
                 file_name = form.files[file_key].name
                 curr_time = datetime.datetime.now()
                 # form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title + '/' + str(int(time.time())) + file_name
-                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ '-' + str(curr_time.minute) + '-' + str(curr_time.second) + '-' + str(curr_time.microsecond) + '_' + file_name
+                form_data[file_key] = os.path.abspath(os.curdir) + '/media/' + title +"/"  + str(curr_time.date()) + '_' + str(curr_time.hour)+ \
+                                      '-' + str(curr_time.minute) + '-' + str(curr_time.second) + '-' + str(curr_time.microsecond) + '_' + file_name
                 Util.saveFile(file, form_data[file_key])
 
             for key, value in form_data.items():
@@ -395,7 +397,7 @@ class TicketDetail(LoginRequiredMixin, FormView):
             status, state_result = ins.getdata(data=form_data, method='patch',
                                                url='/api/v1.0/tickets/{0}'.format(ticket_id))
 
-            if  form_data['b_guanliyuanshenpi_char_xiangmubianhao'] != None :
+            if  'b_guanliyuanshenpi_char_xiangmubianhao' in form_data.keys() and form_data['b_guanliyuanshenpi_char_xiangmubianhao'] != None :
                 try:
                     tempFlowIdRelation = TempFlowIdRelation.objects.get(ticket_id=ticket_id)
                     tempFlowIdRelation.ticket_id = state_result["ticket_id"]
@@ -882,7 +884,7 @@ class Mail(APIView):
         #         pass
 
         return Response({
-            'status': 0,
+            'code': 0,
             'msg': 'ok',
             'results': {
 
