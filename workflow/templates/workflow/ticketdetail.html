@@ -63,6 +63,14 @@
                     {#$(inputs[i]).prop("required",false);//用removeAttr在IE下不生效，改用prop()#}
                 }
             }
+        var textareas =  $("form textarea");
+        for (var i = 0;i<textareas.length;i++){
+            var areaname = $(textareas[i]).attr("name");
+            if (areaname!=undefined && areaname != ''){
+                $(textareas[i]).removeAttr("required");
+                {#$(inputs[i]).prop("required",false);//用removeAttr在IE下不生效，改用prop()#}
+            }
+        }
     }
     //获取操作的流程
     $.ajax({
@@ -199,6 +207,7 @@
                 myfunction(formdata);
             }
             doget();
+            setTimeout(10*1000,console.log("执行成功"));
         }
     });
 </script>
