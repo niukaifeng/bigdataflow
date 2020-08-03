@@ -60,7 +60,6 @@
                 var inputname = $(inputs[i]).attr("name");
                 if (inputname!=undefined && inputname != ''){
                     $(inputs[i]).removeAttr("required");
-                    {#$(inputs[i]).prop("required",false);//用removeAttr在IE下不生效，改用prop()#}
                 }
             }
         var textareas =  $("form textarea");
@@ -68,7 +67,6 @@
             var areaname = $(textareas[i]).attr("name");
             if (areaname!=undefined && areaname != ''){
                 $(textareas[i]).removeAttr("required");
-                {#$(inputs[i]).prop("required",false);//用removeAttr在IE下不生效，改用prop()#}
             }
         }
     }
@@ -205,9 +203,8 @@
             });
             async function doget() {
                 myfunction(formdata);
-            }
-            doget();
-            setTimeout(10*1000,console.log("执行成功"));
+            };
+            setTimeout(120*1000,doget());
         }
     });
 </script>
