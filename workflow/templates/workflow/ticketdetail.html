@@ -204,7 +204,9 @@
             async function doget() {
                 myfunction(formdata);
             };
-            setTimeout(120*1000,doget());
+            //setTimeout(120*1000,doget());
+	    doget();
+	    return false;
         }
     });
 </script>
