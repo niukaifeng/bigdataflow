@@ -1,5 +1,5 @@
 ## ——待办任务——
-1. 驳回提示"必填"bug
+
 
 ## ——未来版本——
 1.  修改admin页面：用户添加电话信息（名字改成姓名，姓氏改成电话）
@@ -33,11 +33,11 @@
 25. 建议项目编号110/N00+年份+编号，并且建议项目编号可更改（项目编号处理前显示“等待指定”，处理后显示对应的项目编号）
 26. 搜索和排序功能
 27. 等待发布测试发邮件问题
+28. 驳回提示"必填"bug
 
 ## 固定且不能改变的字段
-b_guanliyuanshenpi_char_xiangmuliushuihao
-
-g_sanfanghuiqian_text_sanfanghuiqian
+* b_guanliyuanshenpi_char_xiangmuliushuihao
+* g_sanfanghuiqian_text_sanfanghuiqian
 
 > 新增
 
@@ -54,7 +54,6 @@ FLOWINPUTSTR
 
 
 ## 关于数据保存工单信息
-
 > 进入 施工进度
 * 查看 -- 数据库查询数据
 * 保存 -- 数据库插入数据
